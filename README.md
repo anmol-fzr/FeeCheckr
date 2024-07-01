@@ -40,3 +40,8 @@ State Management - [Zustand](https://docs.pmnd.rs/zustand/getting-started/introd
 Schema Validator - [Yup](https://github.com/jquense/yup)
 
 Forms - [React Hook Form](https://react-hook-form.com/)
+
+
+#### Features
+
+- edit `src/schema/envSchema.ts` for env validation

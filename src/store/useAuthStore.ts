@@ -11,7 +11,7 @@ const creds = {
   email: null,
 } as const
 
-const useStore = create<IAuthStore>()(
+const useAuthStore = create<IAuthStore>()(
   persist(
     (set, get) => ({
       creds,
@@ -20,11 +20,10 @@ const useStore = create<IAuthStore>()(
         set({ creds: { ...get().creds, ...creds } })
       },
     }),
-    { name: "useStore", storage: zusLocalStorage },
+    { name: "useAuthStore", storage: zusLocalStorage },
   ),
 );
 
+registerStore(useAuthStore, useAuthStore.persist.getOptions().name as string);
 
-registerStore(useStore, useStore.persist.getOptions().name as string);
-
-export { useStore };
+export { useAuthStore };
