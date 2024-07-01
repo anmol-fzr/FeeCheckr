@@ -17,6 +17,12 @@ npm i -g pnpm@latest
 pnpm up
 ```
 
+## Get Started
+
+```sh
+git clone https://github.com/anmol-fzr/react-app/ && cd react-app && pnpm up && npm run dev
+```
+
 ## Libraries
 
 Typesafe React app Configured with path alias
