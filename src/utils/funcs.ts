@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { envs } from "./envs";
+import { baseURL } from "@/config";
+
 
 function registerStore(store: ReturnType<typeof create>, name: string) {
   if (typeof window !== "undefined" && window.__REDUX_DEVTOOLS_EXTENSION__?.connect && envs.DEV) {
@@ -12,5 +14,23 @@ function registerStore(store: ReturnType<typeof create>, name: string) {
   }
 }
 
+const getQueryKey = (path: string) => {
+  const uri = new URL(path, baseURL)
+  const pathnames: (Record<string, string> | string)[] = uri.pathname.split("/")
 
-export { registerStore }
+  pathnames.shift()
+
+  const obj: Record<string, string> = {}
+
+  if (uri.searchParams.size === 0) {
+    return pathnames
+  }
+
+  for (const [key, value] of uri.searchParams.entries()) {
+    obj[key] = value
+  }
+  pathnames.push(obj)
+  return pathnames
+}
+
+export { registerStore, getQueryKey }

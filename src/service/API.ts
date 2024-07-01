@@ -1,8 +1,8 @@
-
-import { AUTH } from "./services";
+import { AUTH, USERS } from "./services";
 
 const API = {
-  AUTH
+  AUTH,
+  USERS
 } as const
 
 export default API;

@@ -5,3 +5,4 @@ interface IRes<Data> {
 export type { IRes };
 
 export * from "./auth";
+export * from "./user";

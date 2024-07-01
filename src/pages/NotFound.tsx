@@ -1,3 +1,4 @@
+
 const NotFound = () => {
   return (
     <main className="h-screen w-screen grid place-items-center">

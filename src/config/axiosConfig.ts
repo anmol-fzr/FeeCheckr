@@ -25,4 +25,4 @@ axiosInst.interceptors.request.use((config) => {
   return { ...config };
 });
 
-export { axiosInst };
+export { axiosInst, baseURL };
