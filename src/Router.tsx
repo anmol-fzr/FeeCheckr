@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom"
-import { NotFound, UnAuthorized } from "@/pages"
-import { Layout, AuthLayout } from "@/layout"
+import { NotFound } from "@/pages"
+import { Layout } from "@/layout"
 
 const Router = () => {
   return (

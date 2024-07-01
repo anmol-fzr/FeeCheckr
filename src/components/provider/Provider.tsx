@@ -1,9 +1,13 @@
 import { BrowserRouter } from "react-router-dom"
-import type { OnlyChild } from "../../types"
+import { ErrorBoundary } from "react-error-boundary";
+import type { OnlyChild } from "@/types"
+import { ErrorPage } from "@/pages";
 
 const Provider = ({ children }: OnlyChild) => (
   <BrowserRouter>
-    {children}
+    <ErrorBoundary FallbackComponent={ErrorPage} onError={console.log}>
+      {children}
+    </ErrorBoundary >
   </BrowserRouter>
 )
 
