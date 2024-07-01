@@ -1,0 +1,5 @@
+const UnAuthorized = () => (
+  <></>
+)
+
+export { UnAuthorized }
