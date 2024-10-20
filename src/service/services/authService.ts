@@ -1,8 +1,9 @@
 import { axiosInst } from "@/config";
-import { ILoginReq } from "@/types";
+import { IReqLogin } from "@/types";
+import { IResLogin } from "@/types";
 
 const AUTH = {
-  LOGIN: (data: ILoginReq) => axiosInst.post<ILoginReq>("/dashboard/login/", data),
-} as const
+  LOGIN: (data: IReqLogin) => axiosInst.post<IReqLogin, IResLogin>("/auth/login", data),
+} as const;
 
 export { AUTH };

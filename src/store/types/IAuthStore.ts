@@ -1,12 +1,16 @@
+const roles = ["superadmin", "hod", "clerk", "student"] as const;
+
+type Role = (typeof roles)[number];
+
 type ICreds = {
   token: string | null;
   isLogin: boolean;
-  username: string | null;
-  email: string | null;
+  name: string;
+  role: Role;
 };
 
 type IAuthStoreData = {
-  creds: ICreds
+  creds: ICreds;
 };
 
 type IAuthStoreActions = {
@@ -14,6 +18,6 @@ type IAuthStoreActions = {
   updateCreds: (creds: Partial<ICreds>) => void;
 };
 
-type IAuthStore = IAuthStoreData & IAuthStoreActions
+type IAuthStore = IAuthStoreData & IAuthStoreActions;
 
-export type { ICreds, IAuthStore };
+export type { ICreds, IAuthStore, Role };

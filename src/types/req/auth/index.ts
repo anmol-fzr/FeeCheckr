@@ -1,6 +1,6 @@
-type ILoginReq = {
+type IReqLogin = {
   email: string;
   password: string;
-}
+};
 
-export type { ILoginReq }
+export type { IReqLogin };

@@ -12,7 +12,7 @@ const validateStatus = (status: number) => {
 };
 
 const axiosInst = axios.create({
-  baseURL,
+  baseURL: "http://192.168.29.57:3000",
   timeout: 50_000,
   validateStatus,
 });
@@ -25,4 +25,10 @@ axiosInst.interceptors.request.use((config) => {
   return { ...config };
 });
 
-export { axiosInst, baseURL };
+axiosInst.interceptors.response.use((config) => config.data);
+
+const logout = () => {
+  useAuthStore.getState().resetCreds();
+};
+
+export { axiosInst, baseURL, logout };

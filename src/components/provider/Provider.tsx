@@ -1,22 +1,44 @@
-import { BrowserRouter } from "react-router-dom"
+import { BrowserRouter } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
+import { Toaster } from "@/components/ui/sonner";
+import { MantineProvider } from "@mantine/core";
 import { envs } from "@/utils";
 import { queryClient } from "@/config";
-import type { OnlyChild } from "@/types"
+import type { OnlyChild } from "@/types";
 import { ErrorPage } from "@/pages";
+import { API } from "@/service";
+import { useEffect } from "react";
+import { useMetaStore } from "@/store";
 
-const Provider = ({ children }: OnlyChild) => (
-  <BrowserRouter>
-    <ErrorBoundary FallbackComponent={ErrorPage} onError={console.log}>
-      <QueryClientProvider client={queryClient}>
-        {children}
-        {envs.DEV && (<ReactQueryDevtools initialIsOpen={false} />)}
-      </QueryClientProvider>
-    </ErrorBoundary >
-  </BrowserRouter>
-)
+const setDepts = useMetaStore.getState().setDepts;
 
-export { Provider }
+const Provider = ({ children }: OnlyChild) => {
+  useEffect(() => {
+    API.META.GET()
+      .then((res) => {
+        setDepts(res.data.depts);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  return (
+    <BrowserRouter>
+      <ErrorBoundary FallbackComponent={ErrorPage} onError={console.log}>
+        <QueryClientProvider client={queryClient}>
+          <Toaster />
+
+          <MantineProvider defaultColorScheme="auto">
+            {children}
+          </MantineProvider>
+          {envs.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+        </QueryClientProvider>
+      </ErrorBoundary>
+    </BrowserRouter>
+  );
+};
+
+export { Provider };
