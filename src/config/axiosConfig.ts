@@ -29,6 +29,7 @@ axiosInst.interceptors.response.use((config) => config.data);
 
 const logout = () => {
   useAuthStore.getState().resetCreds();
+  window.location.reload();
 };
 
 export { axiosInst, baseURL, logout };

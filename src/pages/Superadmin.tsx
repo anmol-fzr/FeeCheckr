@@ -1,18 +1,14 @@
 import { useSideBarRole } from "@/hooks/useSideBarRole";
-import { useQuery } from "@tanstack/react-query";
-import { API } from "@/service";
+import { AddHodSheet, ClerkTable, Page } from "@/components";
 
-const Superadmin = () => {
+const SuperAdmin = () => {
   useSideBarRole();
 
-  const { isLoading, data } = useQuery({
-    queryKey: ["ADMIN"],
-    queryFn: API.ADMIN.GET,
-  });
-
-  console.log({ data });
-
-  return <>boom</>;
+  return (
+    <Page title="Super Admins" Header={AddHodSheet}>
+      <ClerkTable />
+    </Page>
+  );
 };
 
-export { Superadmin };
+export { SuperAdmin };

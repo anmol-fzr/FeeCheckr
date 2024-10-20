@@ -4,7 +4,7 @@ import {
   Users,
   Login,
   Clerk,
-  Superadmin,
+  SuperAdmin,
   Hod,
   Dept,
   Settings,
@@ -21,7 +21,7 @@ const Router = () => {
       <Route element={<Layout />}>
         <Route path="*" element={<Users />} />
         <Route path="clerk" element={<Clerk />} />
-        <Route path="superadmin" element={<Superadmin />} />
+        <Route path="superadmin" element={<SuperAdmin />} />
         <Route path="hod" element={<Hod />} />
         <Route path="dept" element={<Dept />} />
         <Route path="settings" element={<Settings />} />

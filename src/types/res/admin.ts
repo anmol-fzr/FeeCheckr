@@ -3,7 +3,7 @@ import { IRes, ITimeStamps } from ".";
 type IDept = ITimeStamps & {
   _id: string;
   name: string;
-  createdBy: string;
+  createdBy: IAdminCreatedBy;
 };
 
 type IAdmin = ITimeStamps & {
@@ -28,4 +28,4 @@ type IAdminCreatedBy = ITimeStamps & {
 type IResGetAdmins = IRes<IAdmin[]>;
 
 export type { IResGetAdmins };
-export type { IAdmin };
+export type { IAdmin, IDept, IAdminCreatedBy };

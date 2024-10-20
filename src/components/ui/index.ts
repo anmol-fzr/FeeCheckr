@@ -6,3 +6,4 @@ export * from "./label";
 export * from "./form-input";
 export * from "./form-select";
 export * from "./form-error";
+export * from "./Tipper";
