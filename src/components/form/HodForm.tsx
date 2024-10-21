@@ -11,63 +11,36 @@ import { newHodSchema, updateHodSchema } from "@/schema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { API } from "@/service";
-import { IReqCreateAdmin, IReqUpdateAdmin, IResGetAdmins } from "@/types";
+import { IReqCreateAdmin, IReqUpdateAdmin, IRes, IResGetAdmins } from "@/types";
 import { toast } from "sonner";
 import { usePageContext, usePageParams } from "@/hooks";
 
 let id = "add_hod_sheet";
 
-const HodForm = () => {
-  const { isCreating, isDeleting, isUpdating } = usePageParams();
-
-  return (
-    <>
-      {isCreating && <AddHodForm />}
-      {isUpdating && <UpdateHodForm />}
-      {isDeleting && <DeleteHodForm />}
-    </>
-  );
-};
-
-const AddHodForm = () => {
+const useBaseForm = () => {
   const queryClient = useQueryClient();
 
-  const methods = useForm({
-    resolver: yupResolver(newHodSchema),
-  });
+  const { onOpenChange } = usePageContext();
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: API.ADMIN.CREATE,
-    mutationKey: ["ADMIN", "CREATE"],
-    onError(err) {
-      toast.error(err.response.data.message, { id });
-    },
-    onSuccess(res) {
-      queryClient.invalidateQueries({
-        queryKey: ["ADMIN"],
-      });
-      toast.success(res.message, { id });
-    },
-  });
-
-  const onSubmit = (data: IReqCreateAdmin) => {
-    if (data.mobile) {
-      data.mobile = Number(data.mobile);
-    }
-    toast.loading("Adding New HOD ...", { id });
-    mutate(data);
+  const onError = (err: Error) => {
+    toast.error(err.response.data.message, { id });
   };
 
-  return (
-    <BaseHodForm methods={methods} onSubmit={onSubmit} isPending={isPending} />
-  );
+  const onSuccess = (res: IRes<any>) => {
+    queryClient.invalidateQueries({
+      queryKey: ["ADMIN"],
+    });
+    toast.success(res.message, { id });
+    onOpenChange(false);
+  };
+
+  return { onError, onSuccess };
 };
 
-const UpdateHodForm = () => {
+const useUpdateDeleteForm = () => {
   const queryClient = useQueryClient();
 
-  const { dataId } = usePageParams();
-  const { onOpenChange } = usePageContext();
+  const { isDeleting, dataId } = usePageParams();
 
   const methods = useForm({
     resolver: yupResolver(updateHodSchema),
@@ -89,7 +62,57 @@ const UpdateHodForm = () => {
       obj.deptId = obj?.dept._id;
       return obj;
     },
+    disabled: isDeleting,
   });
+
+  return methods;
+};
+
+const HodForm = () => {
+  const { isCreating, isDeleting, isUpdating } = usePageParams();
+
+  return (
+    <>
+      {isCreating && <AddHodForm />}
+      {isUpdating && <UpdateHodForm />}
+      {isDeleting && <DeleteHodForm />}
+    </>
+  );
+};
+
+const AddHodForm = () => {
+  const { onError, onSuccess } = useBaseForm();
+
+  const methods = useForm({
+    resolver: yupResolver(newHodSchema),
+  });
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: API.ADMIN.CREATE,
+    mutationKey: ["ADMIN", "CREATE"],
+    onError,
+    onSuccess,
+  });
+
+  const onSubmit = (data: IReqCreateAdmin) => {
+    if (data.mobile) {
+      data.mobile = Number(data.mobile);
+    }
+    toast.loading("Adding New HOD ...", { id });
+    mutate(data);
+  };
+
+  return (
+    <BaseHodForm methods={methods} onSubmit={onSubmit} isPending={isPending} />
+  );
+};
+
+const UpdateHodForm = () => {
+  const { onError, onSuccess } = useBaseForm();
+
+  const { dataId } = usePageParams();
+
+  const methods = useUpdateDeleteForm();
 
   const {
     formState: { dirtyFields },
@@ -98,16 +121,8 @@ const UpdateHodForm = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: (data: IReqUpdateAdmin) => API.ADMIN.UPDATE(dataId, data),
     mutationKey: ["ADMIN", "UPDATE"],
-    onError(err) {
-      toast.error(err.response.data.message, { id });
-    },
-    onSuccess(res) {
-      queryClient.invalidateQueries({
-        queryKey: ["ADMIN"],
-      });
-      toast.success(res.message, { id });
-      onOpenChange(false);
-    },
+    onError,
+    onSuccess,
   });
 
   const onSubmit: SubmitHandler<IReqUpdateAdmin> = (data) => {
@@ -126,50 +141,20 @@ const UpdateHodForm = () => {
 };
 
 const DeleteHodForm = () => {
-  const queryClient = useQueryClient();
+  const { onError, onSuccess } = useBaseForm();
 
   const { dataId } = usePageParams();
-  const { onOpenChange } = usePageContext();
 
-  const methods = useForm({
-    resolver: yupResolver(updateHodSchema),
-    defaultValues: async () => {
-      const hodCache: IResGetAdmins | undefined = queryClient.getQueryData([
-        "ADMIN",
-      ]);
-
-      if (hodCache === undefined) {
-        const admin = await API.ADMIN.ONE(dataId as string);
-        return admin.data;
-      }
-
-      const obj = hodCache.data.find(({ _id }) => _id === dataId);
-      if (obj === undefined) {
-        const admin = await API.ADMIN.ONE(dataId as string);
-        return admin.data;
-      }
-      obj.deptId = obj?.dept._id;
-      return obj;
-    },
-    disabled: true,
-  });
+  const methods = useUpdateDeleteForm();
 
   const { mutate, isPending } = useMutation({
     mutationFn: () => API.ADMIN.DELETE(dataId),
     mutationKey: ["ADMIN", "DELETE"],
-    onError(err) {
-      toast.error(err.response.data.message, { id });
-    },
-    onSuccess(res) {
-      queryClient.invalidateQueries({
-        queryKey: ["ADMIN"],
-      });
-      toast.success(res.message, { id });
-      onOpenChange(false);
-    },
+    onError,
+    onSuccess,
   });
 
-  const onSubmit: SubmitHandler<IReqUpdateAdmin> = (data) => {
+  const onSubmit = () => {
     toast.loading("Deleting HOD ...", { id });
     mutate();
   };
@@ -226,8 +211,8 @@ const BaseHodForm = <T extends FieldValues>({
               <Button {...commonProps} variant="destructive">
                 Delete
               </Button>
-            )}
-            {isCreating && <Button {...commonProps}>Submit</Button>}
+            )}{" "}
+            {isCreating && <Button {...commonProps}>Submit</Button>}{" "}
             {isUpdating && <Button {...commonProps}>Update</Button>}
           </div>
         </div>
