@@ -1,14 +1,22 @@
 import { createContext } from "react";
 
-const appState = {
+const appState: IPageContext = {
   isOpen: false,
-  onOpenChange: (_open: boolean) => {},
+  onOpenChange: () => {},
   handleNew: () => {},
-  handleEdit: (_id: string) => {},
-  handleDelete: (_id: string) => {},
+  handleEdit: () => {},
+  handleDelete: () => {},
 } as const;
 
-const PageContext = createContext(appState);
+type IPageContext = {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  handleNew: () => void;
+  handleEdit: (id: string) => void;
+  handleDelete: (id: string) => void;
+};
+
+const PageContext = createContext<IPageContext>(appState);
 const PageProvider = PageContext.Provider;
 
 export { PageContext, PageProvider };

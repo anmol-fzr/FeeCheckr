@@ -26,6 +26,7 @@ type IAdminCreatedBy = ITimeStamps & {
 };
 
 type IResGetAdmins = IRes<IAdmin[]>;
+type IResGetAdmin = IRes<IAdmin>;
 
-export type { IResGetAdmins };
+export type { IResGetAdmins, IResGetAdmin };
 export type { IAdmin, IDept, IAdminCreatedBy };

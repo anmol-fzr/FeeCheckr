@@ -102,12 +102,12 @@ const UpdateHodForm = () => {
     },
   });
 
-  const onSubmit = (data: IReqUpdateAdmin) => {
+  const onSubmit: SubmitHandler<IReqUpdateAdmin> = (data) => {
     if (data.mobile) {
       data.mobile = Number(data.mobile);
     }
-    const payload = {};
-    Object.keys(dirtyFields).map((key) => {
+    const payload: Partial<IReqUpdateAdmin> = {};
+    Object.keys(dirtyFields).forEach((key: keyof IReqUpdateAdmin) => {
       payload[key] = data[key];
     });
     toast.loading("Updating HOD ...", { id });
@@ -117,29 +117,17 @@ const UpdateHodForm = () => {
   return <BaseHodForm {...{ methods, onSubmit, isPending }} />;
 };
 
-type BaseHodFormProps<
-  TFieldValues extends FieldValues = FieldValues,
-  TContext = any,
-  TTransformedValues extends FieldValues | undefined = undefined,
-> = {
-  methods: UseFormReturn<TFieldValues, TContext, TTransformedValues>;
-  onSubmit: TTransformedValues extends undefined
-    ? SubmitHandler<TFieldValues>
-    : TTransformedValues extends FieldValues
-      ? SubmitHandler<TTransformedValues>
-      : never;
+type BaseHodFormProps<T extends FieldValues> = {
+  methods: UseFormReturn<T>;
+  onSubmit: SubmitHandler<T>;
   isPending: boolean;
 };
 
-const BaseHodForm = <
-  TFieldValues extends FieldValues = FieldValues,
-  TContext = any,
-  TTransformedValues extends FieldValues | undefined = undefined,
->({
+const BaseHodForm = <T extends FieldValues>({
   methods,
   onSubmit,
   isPending,
-}: BaseHodFormProps<TFieldValues, TContext, TTransformedValues>) => {
+}: BaseHodFormProps<T>) => {
   const deptOpts = useMetaStore((state) => state.depts);
 
   const { handleSubmit } = methods;

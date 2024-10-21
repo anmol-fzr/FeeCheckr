@@ -6,18 +6,11 @@ const usePageState = () => {
 
   const isOpen = searchParams.get("action") !== null;
 
-  const onClose = useCallback(() => {
-    setSearchParams({});
+  const onOpenChange = useCallback((open: boolean) => {
+    if (!open) {
+      setSearchParams({});
+    }
   }, []);
-
-  const onOpenChange = useCallback(
-    (open: boolean) => {
-      if (!open) {
-        onClose();
-      }
-    },
-    [onClose],
-  );
 
   const handleNew = useCallback(() => {
     setSearchParams({ action: "create" });

@@ -1,9 +1,10 @@
 import { axiosInst } from "@/config";
-import { IResGetAdmins } from "@/types";
+import { IResGetAdmins, IResGetAdmin } from "@/types";
 import { IReqUpdateAdmin, IReqCreateAdmin } from "@/types";
 
 const ADMIN = {
   GET: () => axiosInst.get<IResGetAdmins>("/admin"),
+  ONE: (adminId: string) => axiosInst.get<IResGetAdmin>(`/admin/${adminId}`),
   CREATE: (data: IReqCreateAdmin) =>
     axiosInst.post<IReqCreateAdmin, IResGetAdmins>("/admin", data),
   UPDATE: (adminId: string, data: IReqUpdateAdmin) =>
