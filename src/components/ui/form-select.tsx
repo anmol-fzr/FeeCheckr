@@ -26,8 +26,8 @@ const FormSelect = ({ label, name, options }: FormSelectProps) => {
       <Controller
         name={name}
         control={control}
-        render={({ field: { onChange, value } }) => (
-          <Select onValueChange={onChange} value={value}>
+        render={({ field: { onChange, value, disabled } }) => (
+          <Select onValueChange={onChange} value={value} disabled={disabled}>
             <SelectTrigger id="framework">
               <SelectValue placeholder="Select" />
             </SelectTrigger>

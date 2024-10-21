@@ -1,16 +1,18 @@
 import { useContext, useEffect } from "react";
-import { AppContext } from "@/context";
+import { PageContext } from "@/context";
 
-const useAppContext = () => {
-  const appContext = useContext(AppContext);
+const usePageContext = () => {
+  const appContext = useContext(PageContext);
 
   useEffect(() => {
     if (!appContext) {
-      throw new Error(`useAppContext must be used inside AppContext see https://react.dev/reference/react/useContext#my-component-doesnt-see-the-value-from-my-provider`)
+      throw new Error(
+        `usePageContext must be used inside PageContext see https://react.dev/reference/react/useContext#my-component-doesnt-see-the-value-from-my-provider`,
+      );
     }
-  }, [appContext])
+  }, [appContext]);
 
-  return appContext
-}
+  return appContext;
+};
 
-export { useAppContext }
+export { usePageContext };

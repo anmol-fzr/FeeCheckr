@@ -7,15 +7,17 @@ type PageProps = {
   children: ReactNode;
 };
 
-const Page = ({ title, Header, children }: PageProps) => (
-  <div className="h-fit space-y-4 ">
-    <div className="flex justify-between ">
-      <H1>{title}</H1>
-      <Header />
-    </div>
+const Page = ({ title, Header = () => <></>, children }: PageProps) => {
+  return (
+    <div className="h-fit space-y-4 ">
+      <div className="flex justify-between ">
+        <H1>{title}</H1>
+        <Header />
+      </div>
 
-    {children}
-  </div>
-);
+      {children}
+    </div>
+  );
+};
 
 export { Page };

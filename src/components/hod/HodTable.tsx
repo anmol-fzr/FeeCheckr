@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState, useMemo } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -32,134 +32,119 @@ import {
   TableColumnToggler,
   TableId,
 } from "@/components/table";
-
-const columns: ColumnDef<IDept>[] = [
-  //{
-  //  id: "select",
-  //  header: ({ table }) => (
-  //    <Checkbox
-  //      checked={
-  //        table.getIsAllPageRowsSelected() ||
-  //        (table.getIsSomePageRowsSelected() && "indeterminate")
-  //      }
-  //      onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-  //      aria-label="Select all"
-  //    />
-  //  ),
-  //  cell: ({ row }) => (
-  //    <Checkbox
-  //      checked={row.getIsSelected()}
-  //      onCheckedChange={(value) => row.toggleSelected(!!value)}
-  //      aria-label="Select row"
-  //    />
-  //  ),
-  //  enableSorting: false,
-  //  enableHiding: false,
-  //},
-  {
-    accessorKey: "_id",
-    header: "Id",
-    cell: TableId,
-  },
-  {
-    accessorKey: "name",
-    header: ({ column }) => <TableColumnHeader column={column} title="Name" />,
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => (
-      <TableColumnHeader column={column} title="Email Address" />
-    ),
-  },
-  {
-    accessorKey: "mobile",
-    header: ({ column }) => (
-      <TableColumnHeader column={column} title="Mobile Number" />
-    ),
-  },
-  {
-    accessorKey: "dept.name",
-    header: ({ column }) => (
-      <TableColumnHeader column={column} title="Department" />
-    ),
-  },
-  {
-    accessorKey: "createdBy",
-    header: ({ column }) => (
-      <TableColumnHeader column={column} title="Created By" />
-    ),
-    cell: ({ row }) => {
-      const createdBy: IAdminCreatedBy = row.getValue("createdBy");
-      const name = createdBy.name;
-      const isMe = createdBy.isCreatedByMe;
-      return (
-        <div className="font-medium">
-          <Tipper
-            tooltip={`This Department is created By ${isMe ? "You" : name}`}
-          >
-            {isMe ? (
-              <p>
-                You <span className="text-muted-foreground">( {name} )</span>
-              </p>
-            ) : (
-              name
-            )}
-          </Tipper>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "createdAt",
-    header: ({ column }) => (
-      <TableColumnHeader column={column} title="Created At" />
-    ),
-    cell: ({ row }) => {
-      const date = row.getValue("createdAt");
-      const formatted = formatDateTime(date);
-      return <div className="font-medium">{formatted}</div>;
-    },
-  },
-  {
-    accessorKey: "updatedAt",
-    header: ({ column }) => (
-      <TableColumnHeader column={column} title="Updated At" />
-    ),
-    cell: ({ row }) => {
-      const updatedAt = row.getValue("updatedAt");
-      const createdAt = row.getValue("createdAt");
-      return (
-        <div className="font-medium">
-          {createdAt === updatedAt
-            ? "Never Updated"
-            : formatDateTime(updatedAt)}
-        </div>
-      );
-    },
-  },
-  {
-    id: "actions",
-    header: "Actions",
-    cell: () => {
-      const onEdit = () => console.log("onEdit");
-      const onDelete = () => console.log("onDelete");
-      return <TableActionsMenu {...{ onEdit, onDelete }} />;
-    },
-  },
-];
+import { usePageContext } from "@/hooks";
 
 function HodTable() {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   const { isLoading, data } = useQuery({
     queryKey: ["ADMIN"],
     queryFn: API.ADMIN.GET,
   });
+
+  const { handleEdit, handleDelete } = usePageContext();
+
+  const columns: ColumnDef<IDept>[] = useMemo(
+    () => [
+      {
+        accessorKey: "_id",
+        header: "Id",
+        cell: TableId,
+      },
+      {
+        accessorKey: "name",
+        header: ({ column }) => (
+          <TableColumnHeader column={column} title="Name" />
+        ),
+      },
+      {
+        accessorKey: "email",
+        header: ({ column }) => (
+          <TableColumnHeader column={column} title="Email Address" />
+        ),
+      },
+      {
+        accessorKey: "mobile",
+        header: ({ column }) => (
+          <TableColumnHeader column={column} title="Mobile Number" />
+        ),
+      },
+      {
+        accessorKey: "dept.name",
+        header: ({ column }) => (
+          <TableColumnHeader column={column} title="Department" />
+        ),
+      },
+      {
+        accessorKey: "createdBy",
+        header: ({ column }) => (
+          <TableColumnHeader column={column} title="Created By" />
+        ),
+        cell: ({ row }) => {
+          const createdBy: IAdminCreatedBy = row.getValue("createdBy");
+          const name = createdBy.name;
+          const isMe = createdBy.isCreatedByMe;
+          return (
+            <div className="font-medium">
+              <Tipper
+                tooltip={`This Department is created By ${isMe ? "You" : name}`}
+              >
+                {isMe ? (
+                  <p>
+                    You{" "}
+                    <span className="text-muted-foreground">( {name} )</span>
+                  </p>
+                ) : (
+                  name
+                )}
+              </Tipper>
+            </div>
+          );
+        },
+      },
+      {
+        accessorKey: "createdAt",
+        header: ({ column }) => (
+          <TableColumnHeader column={column} title="Created At" />
+        ),
+        cell: ({ row }) => {
+          const date = row.getValue("createdAt");
+          const formatted = formatDateTime(date);
+          return <div className="font-medium">{formatted}</div>;
+        },
+      },
+      {
+        accessorKey: "updatedAt",
+        header: ({ column }) => (
+          <TableColumnHeader column={column} title="Updated At" />
+        ),
+        cell: ({ row }) => {
+          const updatedAt = row.getValue("updatedAt");
+          const createdAt = row.getValue("createdAt");
+          return (
+            <div className="font-medium">
+              {createdAt === updatedAt
+                ? "Never Updated"
+                : formatDateTime(updatedAt)}
+            </div>
+          );
+        },
+      },
+      {
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => {
+          const _id = row.getValue("_id");
+          const onEdit = () => handleEdit(_id);
+          const onDelete = () => handleDelete(_id);
+          return <TableActionsMenu {...{ onEdit, onDelete }} />;
+        },
+      },
+    ],
+    [],
+  );
 
   const table = useReactTable({
     data: isLoading ? [] : data.data,

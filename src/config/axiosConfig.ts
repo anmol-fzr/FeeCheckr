@@ -12,7 +12,7 @@ const validateStatus = (status: number) => {
 };
 
 const axiosInst = axios.create({
-  baseURL: "http://192.168.29.57:3000",
+  baseURL: "http://localhost:3000",
   timeout: 50_000,
   validateStatus,
 });

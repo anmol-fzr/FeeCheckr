@@ -1,9 +1,14 @@
 import { createContext } from "react";
 
 const appState = {
-  name: "react-app"
-}
+  isOpen: false,
+  onOpenChange: (_open: boolean) => {},
+  handleNew: () => {},
+  handleEdit: (_id: string) => {},
+  handleDelete: (_id: string) => {},
+} as const;
 
-const AppContext = createContext(appState)
+const PageContext = createContext(appState);
+const PageProvider = PageContext.Provider;
 
-export { AppContext }
+export { PageContext, PageProvider };

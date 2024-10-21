@@ -1,20 +1,20 @@
 import * as React from "react";
+import { GalleryVerticalEnd } from "lucide-react";
+import pkg from "@/../package.json";
 
-import { SearchForm } from "@/components/search-form";
-import { VersionSwitcher } from "@/components/version-switcher";
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { NavLink, useLocation } from "react-router-dom";
 import {
   Building,
   HouseIcon,
@@ -23,90 +23,128 @@ import {
   BriefcaseBusinessIcon,
   GraduationCap,
 } from "lucide-react";
-import { isSchema } from "yup";
+import { NavLink } from "react-router-dom";
 import { useAuthStore } from "@/store";
 
-// This is sample data.
-const links = [
+const navMain = [
   {
     title: "Dashboard",
-    icon: <HouseIcon />,
+    url: "/",
     allowedRoles: ["superadmin", "hod", "clerk"],
-    to: "/",
   },
   {
     title: "Departments",
-    icon: <Building />,
+    url: "/dept",
     allowedRoles: ["superadmin"],
-    to: "/dept",
+    //items: [
+    //  {
+    //    title: "Add Department",
+    //    url: "/dept/add",
+    //    allowedRoles: ["superadmin"],
+    //  },
+    //],
   },
   {
     title: "Super Admin",
-    icon: <ShieldCheck />,
+    url: "/superadmin",
     allowedRoles: ["superadmin"],
-    to: "/superadmin",
   },
   {
     title: "HOD",
-    icon: <UserCheck />,
+    url: "/hod",
     allowedRoles: ["superadmin"],
-    to: "/hod",
   },
   {
     title: "Clerk",
-    icon: <BriefcaseBusinessIcon />,
+    url: "/clerk",
     allowedRoles: ["superadmin", "hod"],
-    to: "/clerk",
   },
   {
     title: "Student",
-    icon: <GraduationCap />,
+    url: "/student",
     allowedRoles: ["superadmin", "hod", "clerk"],
-    to: "/student",
   },
 ];
+
+const link = [
+  {
+    url: "/hod/edit",
+    allowedRoles: ["superadmin", "hod", "clerk"],
+  },
+];
+
+navMain.forEach((nav) => {
+  const { url, allowedRoles } = nav;
+  link.push({ url, allowedRoles });
+  if (nav?.items && nav.items.length > 0) {
+    nav.items.forEach((nav) => {
+      const { url, allowedRoles } = nav;
+      link.push({ url, allowedRoles });
+    });
+  }
+});
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const currRole = useAuthStore((state) => state.creds.role);
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        {/*
-        <VersionSwitcher
-          versions={data.versions}
-          defaultVersion={data.versions[0]}
-        />
-        <SearchForm />
-      */}
-        SBSSU
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild>
+              <a href="#">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                  <GalleryVerticalEnd className="size-4" />
+                </div>
+                <div className="flex flex-col gap-0.5 leading-none">
+                  <span className="font-semibold">SBSSU {pkg.name}</span>
+                  <span className="">v{pkg.version}</span>
+                </div>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel></SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {links.map(({ to, title, icon, allowedRoles }) => {
-                const canSee = allowedRoles.includes(currRole);
-                return (
-                  canSee && (
-                    <SidebarMenuItem key={title}>
+          <SidebarMenu>
+            {navMain.map(({ title, items, url, allowedRoles }) => {
+              const canSee = allowedRoles.includes(currRole);
+              return (
+                canSee && (
+                  <SidebarMenuItem key={title}>
+                    <SidebarMenuButton asChild>
                       <NavLink
-                        to={to}
+                        to={url}
                         className={({ isActive }) =>
-                          `flex px-1 rounded-md ${isActive ? "bg-primary " : "hover:bg-white/10"}`
+                          `font-medium ${isActive && "bg-primary"}`
                         }
+                        end
                       >
-                        <SidebarMenuButton className="gap-3 text-md">
-                          {icon}
-                          {title}
-                        </SidebarMenuButton>
+                        {title}
                       </NavLink>
-                    </SidebarMenuItem>
-                  )
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
+                    </SidebarMenuButton>
+                    {items?.length ? (
+                      <SidebarMenuSub>
+                        {items.map(({ title, url, allowedRoles }) => {
+                          const canSee = allowedRoles.includes(currRole);
+                          return (
+                            canSee && (
+                              <SidebarMenuSubButton asChild key={title}>
+                                <NavLink end to={url}>
+                                  {title}
+                                </NavLink>
+                              </SidebarMenuSubButton>
+                            )
+                          );
+                        })}
+                      </SidebarMenuSub>
+                    ) : null}
+                  </SidebarMenuItem>
+                )
+              );
+            })}
+          </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
       <SidebarRail />
@@ -114,4 +152,4 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   );
 }
 
-export { links as sideBarLinks };
+export { link as sideBarLinks };
