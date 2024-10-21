@@ -24,6 +24,7 @@ const HodForm = () => {
     <>
       {isCreating && <AddHodForm />}
       {isUpdating && <UpdateHodForm />}
+      {isDeleting && <DeleteHodForm />}
     </>
   );
 };
@@ -75,11 +76,18 @@ const UpdateHodForm = () => {
         "ADMIN",
       ]);
 
-      if (hodCache) {
-        const obj = hodCache.data.find(({ _id }) => _id === dataId);
-        obj.deptId = obj?.dept._id;
-        return obj;
+      if (hodCache === undefined) {
+        const admin = await API.ADMIN.ONE(dataId as string);
+        return admin.data;
       }
+
+      const obj = hodCache.data.find(({ _id }) => _id === dataId);
+      if (obj === undefined) {
+        const admin = await API.ADMIN.ONE(dataId as string);
+        return admin.data;
+      }
+      obj.deptId = obj?.dept._id;
+      return obj;
     },
   });
 
@@ -117,6 +125,58 @@ const UpdateHodForm = () => {
   return <BaseHodForm {...{ methods, onSubmit, isPending }} />;
 };
 
+const DeleteHodForm = () => {
+  const queryClient = useQueryClient();
+
+  const { dataId } = usePageParams();
+  const { onOpenChange } = usePageContext();
+
+  const methods = useForm({
+    resolver: yupResolver(updateHodSchema),
+    defaultValues: async () => {
+      const hodCache: IResGetAdmins | undefined = queryClient.getQueryData([
+        "ADMIN",
+      ]);
+
+      if (hodCache === undefined) {
+        const admin = await API.ADMIN.ONE(dataId as string);
+        return admin.data;
+      }
+
+      const obj = hodCache.data.find(({ _id }) => _id === dataId);
+      if (obj === undefined) {
+        const admin = await API.ADMIN.ONE(dataId as string);
+        return admin.data;
+      }
+      obj.deptId = obj?.dept._id;
+      return obj;
+    },
+    disabled: true,
+  });
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: () => API.ADMIN.DELETE(dataId),
+    mutationKey: ["ADMIN", "DELETE"],
+    onError(err) {
+      toast.error(err.response.data.message, { id });
+    },
+    onSuccess(res) {
+      queryClient.invalidateQueries({
+        queryKey: ["ADMIN"],
+      });
+      toast.success(res.message, { id });
+      onOpenChange(false);
+    },
+  });
+
+  const onSubmit: SubmitHandler<IReqUpdateAdmin> = (data) => {
+    toast.loading("Deleting HOD ...", { id });
+    mutate();
+  };
+
+  return <BaseHodForm {...{ methods, onSubmit, isPending }} />;
+};
+
 type BaseHodFormProps<T extends FieldValues> = {
   methods: UseFormReturn<T>;
   onSubmit: SubmitHandler<T>;
@@ -130,7 +190,20 @@ const BaseHodForm = <T extends FieldValues>({
 }: BaseHodFormProps<T>) => {
   const deptOpts = useMetaStore((state) => state.depts);
 
+  const { isDeleting, isUpdating, isCreating } = usePageParams();
+
   const { handleSubmit } = methods;
+
+  const { onOpenChange } = usePageContext();
+
+  const commonProps = {
+    type: "submit",
+    className: "w-full",
+    disabled: isPending,
+  } as const;
+
+  const onCancel = () => onOpenChange(false);
+
   return (
     <FormProvider {...methods}>
       <form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
@@ -140,9 +213,23 @@ const BaseHodForm = <T extends FieldValues>({
         <FormInput name="password" label="Password" type="text" />
         <FormSelect name="deptId" options={deptOpts} label="Department" />
         <div className="mt-4">
-          <Button type="submit" className="w-full" disabled={isPending}>
-            Submit
-          </Button>
+          <div className="flex gap-4">
+            <Button
+              {...commonProps}
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+            >
+              Cancel
+            </Button>
+            {isDeleting && (
+              <Button {...commonProps} variant="destructive">
+                Delete
+              </Button>
+            )}
+            {isCreating && <Button {...commonProps}>Submit</Button>}
+            {isUpdating && <Button {...commonProps}>Update</Button>}
+          </div>
         </div>
       </form>
     </FormProvider>

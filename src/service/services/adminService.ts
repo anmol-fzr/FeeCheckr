@@ -9,6 +9,8 @@ const ADMIN = {
     axiosInst.post<IReqCreateAdmin, IResGetAdmins>("/admin", data),
   UPDATE: (adminId: string, data: IReqUpdateAdmin) =>
     axiosInst.patch<IReqUpdateAdmin, IResGetAdmins>(`/admin/${adminId}`, data),
+  DELETE: (adminId: string) =>
+    axiosInst.delete<IReqUpdateAdmin>(`/admin/${adminId}`),
 } as const;
 
 export { ADMIN };
