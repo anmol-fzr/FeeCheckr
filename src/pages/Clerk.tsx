@@ -1,13 +1,31 @@
 import { useSideBarRole } from "@/hooks/useSideBarRole";
-import { AddHodSheet, ClerkTable, Page } from "@/components";
+import { Button, AddClerkSheet, ClerkTable, Page } from "@/components";
+import { usePageContext, usePageState } from "@/hooks";
+import { PageProvider } from "@/context";
+import { Plus } from "lucide-react";
 
 const Clerk = () => {
+  const value = usePageState();
   useSideBarRole();
 
   return (
-    <Page title="Clerk" Header={AddHodSheet}>
-      <ClerkTable />
-    </Page>
+    <PageProvider value={value}>
+      <Page title="Clerk" Header={ClerkHeader}>
+        <ClerkTable />
+      </Page>
+      <AddClerkSheet />
+    </PageProvider>
+  );
+};
+
+const ClerkHeader = () => {
+  const { handleNew } = usePageContext();
+
+  return (
+    <Button onClick={handleNew} type="button">
+      <Plus />
+      Add New Clerk
+    </Button>
   );
 };
 

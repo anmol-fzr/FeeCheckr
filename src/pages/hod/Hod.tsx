@@ -20,6 +20,7 @@ const Hod = () => {
 
 const HodHeader = () => {
   const { handleNew } = usePageContext();
+
   return (
     <Button onClick={handleNew} type="button">
       <Plus />

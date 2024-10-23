@@ -1,3 +1,5 @@
+import { AxiosError } from "axios";
+
 interface IRes<Data> {
   data: Data;
   message: string;
@@ -9,7 +11,9 @@ type ITimeStamps = {
   updatedAt: string;
 };
 
-export type { IRes, ITimeStamps };
+type ServerError = AxiosError<IRes<never>>;
+
+export type { IRes, ITimeStamps, ServerError };
 
 export * from "./admin";
 export * from "./auth";

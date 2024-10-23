@@ -28,6 +28,7 @@ axiosInst.interceptors.request.use((config) => {
 axiosInst.interceptors.response.use((config) => config.data);
 
 const logout = () => {
+  console.log("logout Called axiosConfig.ts:31");
   useAuthStore.getState().resetCreds();
   window.location.reload();
 };

@@ -74,13 +74,13 @@ export function LoginForm() {
               type="email"
               name="email"
               placeholder="m@example.com"
-              defaultValue="ainsa2279@gmail.com"
+              defaultValue="ainsa2277@gmail.com"
             />
             <FormInput
               label="Password"
               type="password"
               name="password"
-              defaultValue="2a4f@sd"
+              defaultValue="admin"
             />
             <Button type="submit" className="w-full">
               Login

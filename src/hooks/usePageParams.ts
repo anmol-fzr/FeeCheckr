@@ -2,8 +2,8 @@ import { useSearchParams } from "react-router-dom";
 
 declare module "react-router-dom" {
   interface URLSearchParams {
-    get(name: "_id"): string | null;
-    get(name: "action"): "create" | "update" | "delete" | null;
+    get(name: "_id"): string;
+    get(name: "action"): "create" | "update" | "delete";
   }
 }
 
