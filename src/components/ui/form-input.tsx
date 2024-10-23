@@ -14,7 +14,7 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
     const { register, formState } = useFormContext();
     const error = formState.errors[props.name]?.message?.toString();
     return (
-      <div className="space-y-0.5">
+      <div className="flex flex-col gap-0.5">
         <Label htmlFor={props.name}>{label}</Label>
         <Input {...props} id={props.name} {...register(props.name)} />
         <FormError>{error}</FormError>

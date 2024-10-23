@@ -21,7 +21,7 @@ const FormSelect = ({ label, name, options }: FormSelectProps) => {
   const { control, formState } = useFormContext();
   const error = formState.errors[name]?.message?.toString();
   return (
-    <div className="space-y-0.5">
+    <div className="w-full flex flex-col gap-0.5">
       <Label htmlFor={name}>{label}</Label>
       <Controller
         name={name}
