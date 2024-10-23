@@ -12,6 +12,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
 import { ModeToggle } from "../mode-toggle";
 
@@ -40,13 +44,17 @@ const Navbar = () => {
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="flex flex-col gap-1">
-            <Button variant="outline" onClick={logout}>
-              <LogOut /> Logout
-            </Button>
-            <Button variant="outline" onClick={toSettings}>
-              <SettingsIcon /> Settings
-            </Button>
+          <DropdownMenuContent align="end" className="flex flex-col gap-1 w-56">
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={toSettings}>
+                <SettingsIcon /> Settings
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={logout}>
+                <LogOut /> Logout
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

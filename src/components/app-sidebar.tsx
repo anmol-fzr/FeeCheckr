@@ -12,19 +12,11 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubButton,
-  SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import {
-  Building,
-  HouseIcon,
-  ShieldCheck,
-  UserCheck,
-  BriefcaseBusinessIcon,
-  GraduationCap,
-} from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useAuthStore } from "@/store";
+import { Separator } from "./ui/separator";
 
 const navMain = [
   {
@@ -105,6 +97,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+      <div className="px-4">
+        <Separator />
+      </div>
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
