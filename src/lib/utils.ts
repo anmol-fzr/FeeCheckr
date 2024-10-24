@@ -37,3 +37,20 @@ export const hasErrorInput = [
   // ring color
   "ring-red-200 dark:ring-red-700/30",
 ];
+
+const enOrdinalRules = new Intl.PluralRules("en-US", { type: "ordinal" });
+
+const suffixes = new Map([
+  ["one", "st"],
+  ["two", "nd"],
+  ["few", "rd"],
+  ["other", "th"],
+]);
+
+const formatOrdinals = (n: number) => {
+  const rule = enOrdinalRules.select(n);
+  const suffix = suffixes.get(rule);
+  return `${n}${suffix}`;
+};
+
+export { formatOrdinals };

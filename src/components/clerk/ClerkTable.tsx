@@ -31,8 +31,11 @@ import {
   TableId,
 } from "@/components/table";
 import { usePageContext } from "@/hooks";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 function ClerkTable() {
+  const [parent] = useAutoAnimate();
+
   const tableContainerRef = React.useRef<HTMLDivElement>(null);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -67,14 +70,8 @@ function ClerkTable() {
   );
 
   const totalDBRowCount = data?.pages?.[0]?.totalPages ?? 0;
-  console.log(data?.pages[0]);
 
   const totalFetched = flatData.length;
-
-  console.log({
-    totalFetched,
-    totalDBRowCount,
-  });
 
   const fetchMoreOnBottomReached = React.useCallback(
     (containerRefElement?: HTMLDivElement | null) => {
@@ -220,9 +217,9 @@ function ClerkTable() {
         ref={tableContainerRef}
       >
         <Table>
-          <TableHeader>
+          <TableHeader ref={parent}>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} ref={parent}>
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id}>
@@ -238,12 +235,13 @@ function ClerkTable() {
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
+          <TableBody ref={parent}>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  ref={parent}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

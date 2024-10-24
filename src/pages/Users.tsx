@@ -2,7 +2,8 @@ import { API } from "@/service";
 import { useQuery } from "@tanstack/react-query";
 
 const Users = () => {
-  return <></>;
+  console.log("Users")
+  return <>Home</>;
 };
 
 export { Users };
