@@ -105,7 +105,10 @@
     @apply h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0;
   }
   tr {
-    @apply border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted h-16 even:bg-muted/25;
+    @apply border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted h-16;
+  }
+  tbody > tr {
+    @apply odd:bg-muted/25;
   }
   td {
     @apply p-4 align-middle [&:has([role=checkbox])]:pr-0;

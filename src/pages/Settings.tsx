@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -38,7 +39,7 @@ export function Settings() {
 
   return (
     <>
-      <h1 className="font-semibold text-3xl">Settings</h1>
+      <PageHeader title="Settings" desc="Manage your account settings." />
 
       <Card className="w-full md:w-[500px]">
         <CardHeader>

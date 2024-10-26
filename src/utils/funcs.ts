@@ -14,7 +14,7 @@ function registerStore(store: ReturnType<typeof create>, name: string) {
     });
     connection?.init(store.getState());
     store.subscribe((newState) => connection?.send(name, newState));
-    console.info(`${name} Registered & Subscribed in Redux DevTools 🔧`);
+    //console.info(`${name} Registered & Subscribed in Redux DevTools 🔧`);
   }
 }
 
@@ -48,4 +48,12 @@ function formatDateTime(dateTime: Date | string): string {
     .toString();
 }
 
-export { registerStore, getQueryKey, formatDateTime };
+const formatCurrency = (n: number) => {
+  const formatter = new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+  });
+  return formatter.format(n);
+};
+
+export { registerStore, getQueryKey, formatDateTime, formatCurrency };

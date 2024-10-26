@@ -11,14 +11,20 @@ import {
   DotsHorizontalIcon,
   Pencil1Icon,
   TrashIcon,
+  EyeOpenIcon,
 } from "@radix-ui/react-icons";
 
 type TableActionsMenuProps = {
-  onEdit: () => void;
-  onDelete: () => void;
+  onView?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 };
 
-const TableActionsMenu = ({ onEdit, onDelete }: TableActionsMenuProps) => {
+const TableActionsMenu = ({
+  onView,
+  onEdit,
+  onDelete,
+}: TableActionsMenuProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -30,14 +36,27 @@ const TableActionsMenu = ({ onEdit, onDelete }: TableActionsMenuProps) => {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={onEdit}>
-          <Pencil1Icon className="w-4 h-4" />
-          Edit
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={onDelete}>
-          <TrashIcon className="w-4 h-4" color="red" />
-          Delete
-        </DropdownMenuItem>
+        {onView && (
+          <DropdownMenuItem onClick={onView}>
+            <EyeOpenIcon className="w-4 h-4" />
+            View
+          </DropdownMenuItem>
+        )}
+        {onEdit && (
+          <DropdownMenuItem onClick={onEdit}>
+            <Pencil1Icon className="w-4 h-4" />
+            Edit
+          </DropdownMenuItem>
+        )}
+        {onDelete && (
+          <DropdownMenuItem onClick={onDelete}>
+            <TrashIcon className="w-4 h-4" color="red" />
+            Delete
+          </DropdownMenuItem>
+        )}
+        {!onView && !onEdit && !onDelete && (
+          <DropdownMenuItem>No Actions Available</DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

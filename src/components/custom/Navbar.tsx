@@ -1,6 +1,5 @@
 import { useAuthStore } from "@/store/useAuthStore";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components";
 import { SettingsIcon, LogOut } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -20,14 +19,16 @@ import {
 import { ModeToggle } from "../mode-toggle";
 
 const Navbar = () => {
-  const role = useAuthStore((state) => state.creds.role).toUpperCase();
+  const role = useAuthStore((state) => state.creds.role)?.toUpperCase();
   const navigate = useNavigate();
 
   const toSettings = () => navigate("/settings");
 
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-      <SidebarTrigger className="-ml-1" />
+      <Tipper tooltip="Toggle Sidebar ( Ctrl + b )">
+        <SidebarTrigger className="-ml-1" />
+      </Tipper>
       <Separator orientation="vertical" className="mr-2 h-4" />
       <div className="flex mr-0 ml-auto gap-2 items-center">
         <Tipper tooltip={`You are a ${role}`}>

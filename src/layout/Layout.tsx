@@ -17,7 +17,7 @@ const Layout = () => {
 
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar variant="floating" defaultChecked={false} />
       <SidebarInset>
         <Navbar />
         <div className="flex flex-1 flex-col gap-4 p-3">

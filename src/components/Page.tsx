@@ -1,17 +1,22 @@
 import { ReactNode } from "react";
-import { H1 } from "./typography";
+import { PageHeader, PageHeaderProps } from "./custom";
 
-type PageProps = {
-  title: string;
+type PageProps = PageHeaderProps & {
   Header: () => ReactNode;
   children: ReactNode;
 };
 
-const Page = ({ title, Header = () => <></>, children }: PageProps) => {
+const Page = ({
+  title = "",
+  desc,
+  Header = () => <></>,
+  children,
+}: PageProps) => {
+  desc ??= `Manage All ${title}.`;
   return (
     <div className="h-fit space-y-4 ">
       <div className="flex justify-between ">
-        <H1>{title}</H1>
+        <PageHeader title={title} desc={desc} />
         <Header />
       </div>
 

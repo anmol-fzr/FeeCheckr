@@ -7,3 +7,7 @@ export * from "./form-input";
 export * from "./form-select";
 export * from "./form-error";
 export * from "./Tipper";
+export * from "./command";
+export * from "./dialog";
+export * from "./popover";
+export * from "./separator";

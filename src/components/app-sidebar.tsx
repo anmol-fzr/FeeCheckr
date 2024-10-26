@@ -24,18 +24,18 @@ const navMain = [
     url: "/",
     allowedRoles: ["superadmin", "hod", "clerk"],
   },
-  {
-    title: "Departments",
-    url: "/dept",
-    allowedRoles: ["superadmin"],
-    //items: [
-    //  {
-    //    title: "Add Department",
-    //    url: "/dept/add",
-    //    allowedRoles: ["superadmin"],
-    //  },
-    //],
-  },
+  //{
+  //  title: "Departments",
+  //  url: "/dept",
+  //  allowedRoles: ["superadmin"],
+  //  //items: [
+  //  //  {
+  //  //    title: "Add Department",
+  //  //    url: "/dept/add",
+  //  //    allowedRoles: ["superadmin"],
+  //  //  },
+  //  //],
+  //},
   {
     title: "Super Admin",
     url: "/superadmin",
@@ -56,27 +56,20 @@ const navMain = [
     url: "/student",
     allowedRoles: ["superadmin", "hod", "clerk"],
   },
-];
-
-const link = [
   {
-    url: "/hod/edit",
+    title: "View Student",
+    url: "/student/:studentId",
+    allowedRoles: ["superadmin", "hod", "clerk"],
+    hidden: true,
+  },
+  {
+    title: "Fees",
+    url: "/fees",
     allowedRoles: ["superadmin", "hod", "clerk"],
   },
 ];
 
-navMain.forEach((nav) => {
-  const { url, allowedRoles } = nav;
-  link.push({ url, allowedRoles });
-  if (nav?.items && nav.items.length > 0) {
-    nav.items.forEach((nav) => {
-      const { url, allowedRoles } = nav;
-      link.push({ url, allowedRoles });
-    });
-  }
-});
-
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const currRole = useAuthStore((state) => state.creds.role);
   return (
     <Sidebar {...props}>
@@ -103,8 +96,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
-            {navMain.map(({ title, items, url, allowedRoles }) => {
-              const canSee = allowedRoles.includes(currRole);
+            {navMain.map(({ title, url, allowedRoles, hidden }) => {
+              const canSee = !hidden && allowedRoles.includes(currRole);
               return (
                 canSee && (
                   <SidebarMenuItem key={title}>
@@ -119,22 +112,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         {title}
                       </NavLink>
                     </SidebarMenuButton>
-                    {items?.length ? (
-                      <SidebarMenuSub>
-                        {items.map(({ title, url, allowedRoles }) => {
-                          const canSee = allowedRoles.includes(currRole);
-                          return (
-                            canSee && (
-                              <SidebarMenuSubButton asChild key={title}>
-                                <NavLink end to={url}>
-                                  {title}
-                                </NavLink>
-                              </SidebarMenuSubButton>
-                            )
-                          );
-                        })}
-                      </SidebarMenuSub>
-                    ) : null}
                   </SidebarMenuItem>
                 )
               );
@@ -147,4 +124,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   );
 }
 
-export { link as sideBarLinks };
+export { AppSidebar };
+export { navMain as sideBarLinks };

@@ -13,20 +13,14 @@ import {
 } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useQuery } from "@tanstack/react-query";
 import { API } from "@/service";
 import { IAdminCreatedBy, IDept } from "@/types";
 import { formatDateTime } from "@/utils";
 import { Tipper } from "@/components";
 import {
+  FullTableHeader,
   TableActionsMenu,
   TableColumnHeader,
   TableColumnToggler,
@@ -167,24 +161,7 @@ function DeptTable() {
       </div>
       <div className="rounded-md border">
         <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
+          <FullTableHeader table={table} />
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (

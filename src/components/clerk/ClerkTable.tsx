@@ -1,24 +1,5 @@
 import * as React from "react";
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { ColumnDef, useReactTable } from "@tanstack/react-table";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { API } from "@/service";
 import { IAdminCreatedBy, IClerk } from "@/types";
@@ -30,19 +11,13 @@ import {
   TableColumnToggler,
   TableId,
 } from "@/components/table";
-import { usePageContext } from "@/hooks";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { useGetTableProps, usePageContext } from "@/hooks";
+import { ReactTable } from "../table/ReactTable";
 
 function ClerkTable() {
-  const [parent] = useAutoAnimate();
+  const tableProps = useGetTableProps();
 
   const tableContainerRef = React.useRef<HTMLDivElement>(null);
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
 
   const { handleEdit, handleDelete } = usePageContext();
 
@@ -77,7 +52,6 @@ function ClerkTable() {
     (containerRefElement?: HTMLDivElement | null) => {
       if (containerRefElement) {
         const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
-        //once the user has scrolled within 500px of the bottom of the table, fetch more data if we can
         if (
           scrollHeight - scrollTop - clientHeight < 500 &&
           !isFetching &&
@@ -90,7 +64,6 @@ function ClerkTable() {
     [fetchNextPage, isFetching, totalFetched, totalDBRowCount],
   );
 
-  //a check on mount and after a fetch to see if the table is already scrolled to the bottom and immediately needs to fetch more data
   React.useEffect(() => {
     fetchMoreOnBottomReached(tableContainerRef.current);
   }, [fetchMoreOnBottomReached]);
@@ -192,19 +165,9 @@ function ClerkTable() {
   const table = useReactTable({
     data: isLoading ? [] : flatData,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-    },
+    ...tableProps,
   });
+
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
@@ -216,78 +179,8 @@ function ClerkTable() {
         onScroll={(e) => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
         ref={tableContainerRef}
       >
-        <Table>
-          <TableHeader ref={parent}>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} ref={parent}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody ref={parent}>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  ref={parent}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+        <ReactTable table={table} />
       </div>
-      {/*
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
-        */}
     </div>
   );
 }

@@ -2,20 +2,15 @@ import { axiosInst } from "@/config";
 import { IResGetAdmins, IResGetAdmin } from "@/types";
 import { IReqUpdateAdmin, IReqCreateAdmin } from "@/types";
 
-type IReqGetAdmins = {
-  deptId?: string;
-};
-
 const ADMIN = {
-  GET: (params: IReqGetAdmins) =>
-    axiosInst.get<IResGetAdmins>("/admin", { params }),
-  ONE: (adminId: string) => axiosInst.get<IResGetAdmin>(`/admin/${adminId}`),
+  GET: () => axiosInst.get("/hod"),
+  ONE: (adminId: string) => axiosInst.get<IResGetAdmin>(`/hod/${adminId}`),
   CREATE: (data: IReqCreateAdmin) =>
-    axiosInst.post<IReqCreateAdmin, IResGetAdmins>("/admin", data),
+    axiosInst.post<IReqCreateAdmin, IResGetAdmins>("/hod", data),
   UPDATE: (adminId: string, data: IReqUpdateAdmin) =>
-    axiosInst.patch<IReqUpdateAdmin, IResGetAdmins>(`/admin/${adminId}`, data),
+    axiosInst.patch<IReqUpdateAdmin, IResGetAdmins>(`/hod/${adminId}`, data),
   DELETE: (adminId: string) =>
-    axiosInst.delete<IReqUpdateAdmin>(`/admin/${adminId}`),
+    axiosInst.delete<IReqUpdateAdmin>(`/hod/${adminId}`),
 } as const;
 
 export { ADMIN };

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 import { FormInput } from "@/components";
 import { Button } from "@/components/ui/button";
@@ -10,8 +10,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useId } from "react";
 import { loginSchema } from "@/schema";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -29,13 +27,19 @@ export function LoginForm() {
 
   const methods = useForm({
     resolver: yupResolver(loginSchema),
+    defaultValues: {
+      email: "ainsa2279@gmail.com",
+      password: "admin",
+      //password: "2a4f@sd",
+    },
   });
 
   const { handleSubmit } = methods;
 
-  const { mutate, isPending } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: API.AUTH.LOGIN,
     onSuccess(res) {
+      console.log({ res });
       const { token, role, name } = res.data;
 
       updateCreds({
@@ -49,7 +53,7 @@ export function LoginForm() {
       navigate("/");
     },
     onError(err) {
-      toast.success(err.message, { id });
+      toast.error(err.message, { id });
     },
   });
 
@@ -74,14 +78,8 @@ export function LoginForm() {
               type="email"
               name="email"
               placeholder="m@example.com"
-              defaultValue="ainsa2277@gmail.com"
             />
-            <FormInput
-              label="Password"
-              type="password"
-              name="password"
-              defaultValue="admin"
-            />
+            <FormInput label="Password" type="password" name="password" />
             <Button type="submit" className="w-full">
               Login
             </Button>
