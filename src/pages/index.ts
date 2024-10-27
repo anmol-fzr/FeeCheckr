@@ -12,4 +12,4 @@ export * from "./NotFound";
 export * from "./Superadmin";
 export * from "./UnAuthorized";
 
-export * from "./Users";
+export * from "./Dashboard";

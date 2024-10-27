@@ -82,7 +82,7 @@ function StudentFeeTable() {
       {
         accessorKey: "sbCollRef",
         header: ({ column }) => (
-          <TableColumnHeader column={column} title="SB Collect Ref" />
+          <TableColumnHeader column={column} title="Student Name" />
         ),
       },
       {

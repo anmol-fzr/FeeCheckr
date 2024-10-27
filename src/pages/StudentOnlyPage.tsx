@@ -2,34 +2,23 @@ import {
   TableActionsMenu,
   TableColumnHeader as TableColHeader,
 } from "@/components/table";
+import { FeeStatusBadge } from "@/components";
 import { Card, CardContent } from "@/components/ui/card";
 import { ReactTable } from "@/components/table/ReactTable";
 import { useRouteParam } from "@/hooks";
 import { formatOrdinals } from "@/lib/utils";
 import { API } from "@/service";
 import { IFee } from "@/types";
-import { formatCurrency, formatDateTime } from "@/utils";
+import { batchToClgYear, formatCurrency, formatDateTime } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
 import {
   ColumnDef,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Badge, GoBackButton } from "@/components";
+import { GoBackButton } from "@/components";
 import { useNavigate } from "react-router-dom";
-import { memo } from "react";
 import { Icon } from "@iconify/react";
-import { MobileIcon, EnvelopeClosedIcon } from "@radix-ui/react-icons";
-
-type Status = IFee["status"];
-
-const colorXStatus: Record<Status, string> = {
-  pending:
-    "bg-yellow-100 text-yellow-700 hover:bg-yellow-100 hover:text-yellow-700",
-  accepted:
-    "bg-green-100 text-green-700 hover:bg-green-100 hover:text-green-700",
-  rejected: "bg-red-100 text-red-700 hover:bg-red-100 hover:text-red-700",
-};
 
 const year = new Date().getFullYear();
 
@@ -72,7 +61,7 @@ const StudentOnlyPage = () => {
       accessorKey: "status",
       header: ({ column }) => <TableColHeader column={column} title="Status" />,
       cell: ({ row }) => {
-        const status: Status = row.getValue("status");
+        const status = row.original.status;
         return <FeeStatusBadge status={status} />;
       },
     },
@@ -121,9 +110,7 @@ const StudentOnlyPage = () => {
                 </h3>
                 <p className="text-muted-foreground">
                   {data?.data?.profile.batch}
-                  {" ( "}
-                  {formatOrdinals(year - data?.data?.profile.batch + 1)} Year
-                  {" ) "}
+                  {batchToClgYear(data?.data?.profile.batch)}
                 </p>
                 <p className="text-muted-foreground">
                   {data?.data?.profile.rollNo}
@@ -151,9 +138,5 @@ const StudentOnlyPage = () => {
     </>
   );
 };
-
-const FeeStatusBadge = memo(({ status }: { status: Status }) => {
-  return <Badge className={colorXStatus[status]}>{status.toUpperCase()}</Badge>;
-});
 
 export { StudentOnlyPage, FeeStatusBadge };

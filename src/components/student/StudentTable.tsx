@@ -10,7 +10,7 @@ import {
   TableColumnToggler,
   TableId,
 } from "@/components/table";
-import { useGetTableProps, usePageContext } from "@/hooks";
+import { useGetTableProps, usePageContext, useTableContext } from "@/hooks";
 import { ReactTable } from "../table/ReactTable";
 import { FacetedFilter } from "../table/FacetedFilter";
 import { Button } from "../ui";
@@ -22,7 +22,7 @@ import debounce from "lodash.debounce";
 import { useSet } from "@uidotdev/usehooks";
 import { H3 } from "../typography";
 import { FormProvider, useForm } from "react-hook-form";
-import { FormInput } from "@/components";
+import { FormInput, StatusBadge } from "@/components";
 import { useNavigate } from "react-router-dom";
 
 const proComp = [
@@ -33,6 +33,17 @@ const proComp = [
   {
     label: "UnComplete",
     value: "uncomplete",
+  },
+];
+
+const boolOps = [
+  {
+    label: "Verified",
+    value: "true",
+  },
+  {
+    label: "Un Verified",
+    value: "false",
   },
 ];
 
@@ -55,8 +66,10 @@ function StudentTable() {
   const tableProps = useGetTableProps();
   const selectedBatchs = useSet<string>();
   const selectedCompletions = useSet<string>(["complete", "uncomplete"]);
+  const selectedVerification = useSet<string>(["true", "false"]);
 
   const navigate = useNavigate();
+  const { page } = useTableContext();
 
   const [filterParams, setFilterParams] = React.useState<
     Record<string, string | string[]>
@@ -64,10 +77,13 @@ function StudentTable() {
 
   const tableContainerRef = React.useRef<HTMLDivElement>(null);
 
-  const { handleEdit, handleDelete } = usePageContext();
+  const params = React.useMemo(
+    () => ({ ...filterParams, page }),
+    [filterParams, page],
+  );
 
-  const { isLoading, data } = useQuery({
-    queryKey: ["STUDENTS", filterParams] as const,
+  const { isLoading, isFetching, data } = useQuery({
+    queryKey: ["STUDENTS", params] as const,
     queryFn: ({ queryKey }) => API.STUDENTS.GET(queryKey[1]),
   });
 
@@ -86,6 +102,20 @@ function StudentTable() {
         cell: ({ cell }) => {
           const name = cell.row.original?.name;
           return name ?? "N/A";
+        },
+      },
+      {
+        accessorKey: "isVerified",
+        header: ({ column }) => (
+          <TableColumnHeader column={column} title="Verified" />
+        ),
+        cell: ({ cell }) => {
+          const isVerified = cell.row.original.isVerified;
+          return (
+            <StatusBadge variant={isVerified ? "green" : "red"}>
+              {isVerified ? "Verified" : "Un Verified"}
+            </StatusBadge>
+          );
         },
       },
       {
@@ -145,14 +175,14 @@ function StudentTable() {
         header: "Actions",
         cell: ({ row }) => {
           const _id = row.getValue("_id");
-          const onEdit = () => handleEdit(_id);
-          const onDelete = () => handleDelete(_id);
+          //const onEdit = () => handleEdit(_id);
+          //const onDelete = () => handleDelete(_id);
           const onView = () => navigate(_id);
-          return <TableActionsMenu {...{ onView, onEdit, onDelete }} />;
+          return <TableActionsMenu {...{ onView }} />;
         },
       },
     ],
-    [handleEdit, handleDelete, navigate],
+    [navigate],
   );
 
   const table = useReactTable<IStudent>({
@@ -164,13 +194,16 @@ function StudentTable() {
   //const haveFiltersOn =
 
   const onSearch = React.useCallback(
-    debounce((values?: any) => {
+    debounce(() => {
+      const values = form.getValues();
       const batch = Array.from(selectedBatchs);
       const completion = Array.from(selectedCompletions);
+      const isVerified = Array.from(selectedVerification);
       setFilterParams({
         ...values,
         batch,
         completion,
+        isVerified,
       });
     }, 250),
     [selectedBatchs],
@@ -186,15 +219,13 @@ function StudentTable() {
   }, []);
 
   return (
-    <div className="w-full">
-      <div className="flex flex-col py-4">
+    <div className="flex flex-col gap-4 w-full">
+      <div className="flex flex-col gap-4 py-6">
         <H3>Search</H3>
-        <div className="flex items-end gap-4 py-4">
+        {page}
+        <div className="flex items-end gap-4">
           <FormProvider {...form}>
-            <form
-              className="flex gap-4 items-end"
-              onSubmit={form.handleSubmit(onSearch)}
-            >
+            <form className="flex gap-4 items-end">
               <FormInput name="name" label="Name" className="min-w-[250px]" />
               <FormInput
                 name="email"
@@ -214,11 +245,17 @@ function StudentTable() {
             </form>
           </FormProvider>
         </div>
-        <div className="flex items-end gap-4 py-4">
+        <div className="flex items-end gap-4">
           <FacetedFilter
             title="Batch"
             options={statuses}
             {...{ selected: selectedBatchs }}
+          />
+          <FacetedFilter
+            hideSearch
+            title="Verified"
+            options={boolOps}
+            {...{ selected: selectedVerification }}
           />
           <FacetedFilter
             hideSearch
@@ -228,15 +265,13 @@ function StudentTable() {
           />
         </div>
       </div>
-      <div className="flex items-center gap-8 py-4">
-        <TableColumnToggler table={table} />
-      </div>
+      <TableColumnToggler table={table} />
       <div
-        className="rounded-md border"
+        className="rounded-md border "
         //onScroll={(e) => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
         ref={tableContainerRef}
       >
-        <ReactTable table={table} />
+        <ReactTable table={table} isLoading={isFetching} />
       </div>
     </div>
   );

@@ -5,3 +5,4 @@ export * from "./TableId";
 export * from "./FullTableHeader";
 export * from "./FullTableBody";
 export * from "./TableFacetedFilter";
+export * from "./TableProvider";

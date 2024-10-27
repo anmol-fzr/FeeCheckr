@@ -1,6 +1,6 @@
 import { useSideBarRole } from "@/hooks/useSideBarRole";
-import { StudentTable, Page } from "@/components";
-import {  usePageState } from "@/hooks";
+import { StudentTable, Page, TableProvider } from "@/components";
+import { usePageState } from "@/hooks";
 import { PageProvider } from "@/context";
 
 const Student = () => {
@@ -9,8 +9,10 @@ const Student = () => {
 
   return (
     <PageProvider value={value}>
-      <Page title="Students" Header={() =><></>}>
-        <StudentTable />
+      <Page title="Students" Header={() => <></>}>
+        <TableProvider>
+          <StudentTable />
+        </TableProvider>
       </Page>
     </PageProvider>
   );

@@ -12,3 +12,4 @@ export * from "./app-sidebar";
 export * from "./typography";
 export * from "./custom";
 export * from "./fee";
+export * from "./table";
