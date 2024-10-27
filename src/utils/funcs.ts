@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { envs } from "./envs";
 import { baseURL } from "@/config";
 import { useSettingsStore } from "@/store";
+import { formatOrdinals } from "@/lib/utils";
 
 function registerStore(store: ReturnType<typeof create>, name: string) {
   if (
@@ -56,4 +57,23 @@ const formatCurrency = (n: number) => {
   return formatter.format(n);
 };
 
-export { registerStore, getQueryKey, formatDateTime, formatCurrency };
+const batchToClgYear = (batch: number, withParenthesis = true) => {
+  const year = new Date().getFullYear();
+  let value = "";
+  if (withParenthesis) {
+    value += " ( ";
+  }
+  value += formatOrdinals(year - batch + 1);
+  if (withParenthesis) {
+    value += " Year  ) ";
+  }
+  return value;
+};
+
+export {
+  registerStore,
+  getQueryKey,
+  formatDateTime,
+  formatCurrency,
+  batchToClgYear,
+};

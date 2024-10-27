@@ -2,8 +2,8 @@ import * as React from "react";
 import { ColumnDef, useReactTable } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { API } from "@/service";
-import { IStudent } from "@/types";
-import { formatDateTime } from "@/utils";
+import { IStudent, IResGetFees } from "@/types";
+import { batchToClgYear, formatCurrency, formatDateTime } from "@/utils";
 import {
   TableActionsMenu,
   TableColumnHeader,
@@ -23,6 +23,8 @@ import { useSet } from "@uidotdev/usehooks";
 import { H3 } from "../typography";
 import { FormProvider, useForm } from "react-hook-form";
 import { FormInput } from "@/components";
+import { formatOrdinals } from "@/lib/utils";
+import { FeeStatusBadge } from "@/pages";
 
 const proComp = [
   {
@@ -50,6 +52,8 @@ const statuses = [
   },
 ];
 
+type IFee = IResGetFees["data"][0];
+
 function StudentFeeTable() {
   const tableProps = useGetTableProps();
   const selectedBatchs = useSet<string>();
@@ -64,49 +68,88 @@ function StudentFeeTable() {
   const { handleEdit, handleDelete } = usePageContext();
 
   const { isLoading, data } = useQuery({
-    queryKey: ["STUDENTS", filterParams] as const,
-    queryFn: ({ queryKey }) => API.STUDENTS.GET(queryKey[1]),
+    queryKey: ["FEES"] as const,
+    queryFn: () => API.FEES.GET(),
   });
 
-  const columns: ColumnDef<IStudent>[] = React.useMemo(
+  const columns: ColumnDef<IFee>[] = React.useMemo(
     () => [
       {
         accessorKey: "_id",
-        header: "Id",
+        header: "Fee Id",
         cell: TableId,
       },
       {
-        accessorKey: "name",
+        accessorKey: "sbCollRef",
         header: ({ column }) => (
-          <TableColumnHeader column={column} title="Name" />
+          <TableColumnHeader column={column} title="SB Collect Ref" />
+        ),
+      },
+      {
+        accessorKey: "student.details.name",
+        header: ({ column }) => (
+          <TableColumnHeader column={column} title="Student Name" />
+        ),
+      },
+      {
+        accessorKey: "sem",
+        header: ({ column }) => (
+          <TableColumnHeader column={column} title="Semester" />
         ),
         cell: ({ cell }) => {
-          const name = cell.row.original?.name;
-          return name ?? "N/A";
+          const sem = cell.row.original.sem;
+          return formatOrdinals(sem);
         },
       },
       {
-        accessorKey: "email",
+        accessorKey: "feeType",
         header: ({ column }) => (
-          <TableColumnHeader column={column} title="Email Address" />
+          <TableColumnHeader column={column} title="Fee Type" />
         ),
       },
       {
-        accessorKey: "mobile",
+        accessorKey: "amount",
         header: ({ column }) => (
-          <TableColumnHeader column={column} title="Mobile Number" />
+          <TableColumnHeader column={column} title="Amount" />
         ),
-        cell: ({ cell }) => {
-          return cell.row.original?.details?.mobile ?? "N/A";
+        cell: ({ row }) => {
+          const amount = row.getValue("amount");
+          const fmtd = formatCurrency(amount);
+          return fmtd;
         },
       },
       {
-        accessorKey: "batch",
+        accessorKey: "status",
+        header: ({ column }) => (
+          <TableColumnHeader column={column} title="Status" />
+        ),
+        cell: ({ cell }) => {
+          const status = cell.row.original.status;
+          return (
+            <>
+              <FeeStatusBadge status={status} />
+              {/*
+              <Button variant="ghost">ghost</Button>
+                */}
+            </>
+          );
+        },
+      },
+      {
+        accessorKey: "student.details.batch",
         header: ({ column }) => (
           <TableColumnHeader column={column} title="Batch" />
         ),
         cell: ({ cell }) => {
-          return cell.row.original?.batch ?? "N/A";
+          const batch = cell.row.original.student.details.batch;
+          return (
+            <p>
+              {batch}{" "}
+              <span className="text-muted-foreground">
+                {batchToClgYear(batch)}
+              </span>
+            </p>
+          );
         },
       },
       {
