@@ -13,7 +13,7 @@ const validateStatus = (status: number) => {
 };
 
 const axiosInst = axios.create({
-  baseURL: "http://192.168.29.57:3000",
+  baseURL,
   timeout: 50_000,
   validateStatus,
   paramsSerializer: (params) => qs.stringify(params),
