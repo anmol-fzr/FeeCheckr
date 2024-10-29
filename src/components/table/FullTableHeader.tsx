@@ -1,16 +1,17 @@
+import { HTMLAttributes } from "react";
 import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Table, flexRender } from "@tanstack/react-table";
 
-interface FullTableHeaderProps<TData> {
+type FullTableHeaderProps<TData> = HTMLAttributes<HTMLTableSectionElement> & {
   table: Table<TData>;
-}
+};
 
-const FullTableHeader = <T,>({ table }: FullTableHeaderProps<T>) => {
+const FullTableHeader = <T,>({ table, ...props }: FullTableHeaderProps<T>) => {
   const [animateRef] = useAutoAnimate();
 
   return (
-    <TableHeader ref={animateRef}>
+    <TableHeader {...props}>
       {table.getHeaderGroups().map((headerGroup) => (
         <TableRow key={headerGroup.id} ref={animateRef}>
           {headerGroup.headers.map((header) => {

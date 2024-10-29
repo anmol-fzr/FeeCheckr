@@ -8,11 +8,10 @@ import {
   getCoreRowModel,
   getFacetedRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
 } from "@tanstack/react-table";
 
-const useGetTableProps = () => {
+const useGetTableProps = <T>() => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -21,8 +20,7 @@ const useGetTableProps = () => {
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
+    getSortedRowModel: getSortedRowModel<T>(),
     getFilteredRowModel: getFilteredRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     onColumnVisibilityChange: setColumnVisibility,

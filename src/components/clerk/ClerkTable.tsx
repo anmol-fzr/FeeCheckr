@@ -11,63 +11,46 @@ import {
   TableColumnToggler,
   TableId,
 } from "@/components/table";
-import { useGetTableProps, usePageContext } from "@/hooks";
+import {
+  useGetTableProps,
+  usePageContext,
+  useReactTableVirtualizer,
+} from "@/hooks";
 import { ReactTable } from "../table/ReactTable";
 
 function ClerkTable() {
   const tableProps = useGetTableProps();
 
-  const tableContainerRef = React.useRef<HTMLDivElement>(null);
+  const tableRef = React.useRef<HTMLDivElement>(null);
 
   const { handleEdit, handleDelete } = usePageContext();
 
-  const { isLoading, data, fetchNextPage, isFetching } = useInfiniteQuery({
-    initialPageParam: {
-      page: 1,
-      size: 10,
-    },
-    queryKey: ["CLERK"],
-    queryFn: ({ pageParam }) => API.CLERK.GET(pageParam),
-    getNextPageParam: (lastPage, _, lastPageParam) => {
-      const hasNextPage = lastPage.totalPages > lastPageParam.page;
-      return hasNextPage
-        ? {
-            page: lastPage.currPage + 1,
-            size: lastPage.currPageSize,
-          }
-        : null;
-    },
-  });
+  const { isLoading, data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      initialPageParam: {
+        page: 1,
+        size: 10,
+      },
+      queryKey: ["CLERK"],
+      queryFn: ({ pageParam }) => API.CLERK.GET(pageParam),
+      getNextPageParam: (lastPage, _, lastPageParam) => {
+        const hasNextPage =
+          Math.ceil(lastPage.paginate.total / lastPageParam.size) >
+          lastPageParam.page;
+
+        return hasNextPage
+          ? {
+              page: lastPageParam.page + 1,
+              size: lastPageParam.size,
+            }
+          : null;
+      },
+    });
 
   const flatData = React.useMemo(
     () => data?.pages?.flatMap((page) => page.data) ?? [],
     [data],
   );
-
-  const totalDBRowCount = data?.pages?.[0]?.totalPages ?? 0;
-
-  const totalFetched = flatData.length;
-
-  const fetchMoreOnBottomReached = React.useCallback(
-    (containerRefElement?: HTMLDivElement | null) => {
-      if (containerRefElement) {
-        const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
-        if (
-          scrollHeight - scrollTop - clientHeight < 500 &&
-          !isFetching &&
-          totalFetched < totalDBRowCount
-        ) {
-          fetchNextPage();
-        }
-      }
-    },
-    [fetchNextPage, isFetching, totalFetched, totalDBRowCount],
-  );
-
-  React.useEffect(() => {
-    fetchMoreOnBottomReached(tableContainerRef.current);
-  }, [fetchMoreOnBottomReached]);
-
   const columns: ColumnDef<IClerk>[] = React.useMemo(
     () => [
       {
@@ -168,18 +151,51 @@ function ClerkTable() {
     ...tableProps,
   });
 
+  const rowVirtualizer = useReactTableVirtualizer({
+    table,
+    tableRef,
+  });
+
+  React.useEffect(() => {
+    const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
+
+    if (!lastItem) {
+      return;
+    }
+
+    if (
+      lastItem.index >= flatData.length - 1 &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      fetchNextPage();
+    }
+  }, [
+    hasNextPage,
+    fetchNextPage,
+    flatData.length,
+    isFetchingNextPage,
+    rowVirtualizer.getVirtualItems(),
+  ]);
+
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
         <TableColumnToggler table={table} />
       </div>
-      <button onClick={() => fetchNextPage()}>fetchNextPage</button>
       <div
-        className="rounded-md border"
-        onScroll={(e) => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
-        ref={tableContainerRef}
+        ref={tableRef}
+        style={{
+          height: `790px`,
+          width: `100%`,
+          overflow: "auto",
+        }}
       >
-        <ReactTable table={table} />
+        <ReactTable
+          table={table}
+          isLoading={isLoading}
+          rowVirtualizer={rowVirtualizer}
+        />
       </div>
     </div>
   );

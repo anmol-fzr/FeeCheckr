@@ -1,64 +1,45 @@
-import * as React from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { ColumnDef, useReactTable } from "@tanstack/react-table";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { API } from "@/service";
 import { IStudent } from "@/types";
-import { formatDateTime } from "@/utils";
 import {
   TableActionsMenu,
   TableColumnHeader,
   TableColumnToggler,
   TableId,
-} from "@/components/table";
-import { useGetTableProps, usePageContext, useTableContext } from "@/hooks";
-import { ReactTable } from "../table/ReactTable";
-import { FacetedFilter } from "../table/FacetedFilter";
-import { Button } from "../ui";
+  StatusBadge,
+  FormInput,
+  ReactTable,
+  TableColCreatedAt,
+  TableColUpdatedAt,
+  FormInputProps,
+  SearchButton,
+  CrossButton,
+} from "@/components";
 import {
-  MagnifyingGlassIcon as SearchIcon,
-  Cross2Icon,
-} from "@radix-ui/react-icons";
-import debounce from "lodash.debounce";
-import { useSet } from "@uidotdev/usehooks";
+  useGetTableProps,
+  useInfinitePage,
+  useReactTableVirtualizer,
+} from "@/hooks";
 import { H3 } from "../typography";
+import debounce from "lodash.debounce";
 import { FormProvider, useForm } from "react-hook-form";
-import { FormInput, StatusBadge } from "@/components";
+import { FacetedFilter } from "../table/FacetedFilter";
+import { useSet } from "@uidotdev/usehooks";
+import { proComp, boolOps, statuses } from "@/utils/facets";
+import { initialPageParam, getNextPageParam } from "@/components";
+import { useFilterParams } from "@/hooks/query/useFilterParams";
 import { useNavigate } from "react-router-dom";
 
-const proComp = [
+const searchFields: FormInputProps[] = [
   {
-    label: "Complete",
-    value: "complete",
+    name: "name",
+    label: "Name",
   },
   {
-    label: "UnComplete",
-    value: "uncomplete",
-  },
-];
-
-const boolOps = [
-  {
-    label: "Verified",
-    value: "true",
-  },
-  {
-    label: "Un Verified",
-    value: "false",
-  },
-];
-
-const statuses = [
-  {
-    value: "2021",
-    label: "2021",
-  },
-  {
-    value: "2022",
-    label: "2022",
-  },
-  {
-    value: "2024",
-    label: "2024",
+    name: "email",
+    label: "Email",
   },
 ];
 
@@ -67,27 +48,13 @@ function StudentTable() {
   const selectedBatchs = useSet<string>();
   const selectedCompletions = useSet<string>(["complete", "uncomplete"]);
   const selectedVerification = useSet<string>(["true", "false"]);
+  const { filterParams, appendFilterParams, resetFilterParams } =
+    useFilterParams({});
 
+  const tableRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const { page } = useTableContext();
 
-  const [filterParams, setFilterParams] = React.useState<
-    Record<string, string | string[]>
-  >({});
-
-  const tableContainerRef = React.useRef<HTMLDivElement>(null);
-
-  const params = React.useMemo(
-    () => ({ ...filterParams, page }),
-    [filterParams, page],
-  );
-
-  const { isLoading, isFetching, data } = useQuery({
-    queryKey: ["STUDENTS", params] as const,
-    queryFn: ({ queryKey }) => API.STUDENTS.GET(queryKey[1]),
-  });
-
-  const columns: ColumnDef<IStudent>[] = React.useMemo(
+  const columns: ColumnDef<IStudent>[] = useMemo(
     () => [
       {
         accessorKey: "_id",
@@ -147,36 +114,20 @@ function StudentTable() {
         header: ({ column }) => (
           <TableColumnHeader column={column} title="Created At" />
         ),
-        cell: ({ row }) => {
-          const date = row.getValue("createdAt");
-          const formatted = formatDateTime(date);
-          return <div className="font-medium">{formatted}</div>;
-        },
+        cell: TableColCreatedAt,
       },
       {
         accessorKey: "updatedAt",
         header: ({ column }) => (
           <TableColumnHeader column={column} title="Updated At" />
         ),
-        cell: ({ row }) => {
-          const updatedAt = row.getValue("updatedAt");
-          const createdAt = row.getValue("createdAt");
-          return (
-            <div className="font-medium">
-              {createdAt === updatedAt
-                ? "Never Updated"
-                : formatDateTime(updatedAt)}
-            </div>
-          );
-        },
+        cell: TableColUpdatedAt,
       },
       {
         id: "actions",
         header: "Actions",
         cell: ({ row }) => {
-          const _id = row.getValue("_id");
-          //const onEdit = () => handleEdit(_id);
-          //const onDelete = () => handleDelete(_id);
+          const _id = row.original._id;
           const onView = () => navigate(_id);
           return <TableActionsMenu {...{ onView }} />;
         },
@@ -185,21 +136,48 @@ function StudentTable() {
     [navigate],
   );
 
-  const table = useReactTable<IStudent>({
-    data: isLoading ? [] : data?.data,
+  const { isLoading, data, fetchNextPage, isFetchingNextPage, hasNextPage } =
+    useInfiniteQuery({
+      initialPageParam,
+      queryKey: ["STUDENTS", filterParams] as const,
+      queryFn: ({ pageParam, queryKey }) =>
+        API.STUDENTS.GET({ ...pageParam, ...queryKey[1] }),
+      getNextPageParam,
+    });
+
+  const allRows = useMemo(
+    () => (data ? data.pages.flatMap((d) => d.data) : []),
+    [data],
+  );
+
+  const table = useReactTable({
+    data: allRows,
     columns,
     ...tableProps,
   });
 
-  //const haveFiltersOn =
+  const rowVirtualizer = useReactTableVirtualizer({
+    table,
+    tableRef,
+  });
 
-  const onSearch = React.useCallback(
+  useInfinitePage({
+    rowVirtualizer,
+    allRows,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  });
+
+  const form = useForm();
+
+  const onSearch = useCallback(
     debounce(() => {
       const values = form.getValues();
       const batch = Array.from(selectedBatchs);
       const completion = Array.from(selectedCompletions);
       const isVerified = Array.from(selectedVerification);
-      setFilterParams({
+      appendFilterParams({
         ...values,
         batch,
         completion,
@@ -209,39 +187,30 @@ function StudentTable() {
     [selectedBatchs],
   );
 
-  const form = useForm({});
-
-  const onReset = React.useCallback(() => {
-    setFilterParams({});
+  const onReset = useCallback(() => {
+    resetFilterParams();
     selectedBatchs.clear();
     selectedCompletions.add("complete");
     selectedCompletions.add("uncomplete");
   }, []);
 
   return (
-    <div className="flex flex-col gap-4 w-full">
+    <div className="flex flex-col gap-4 w-full ">
       <div className="flex flex-col gap-4 py-6">
         <H3>Search</H3>
-        {page}
         <div className="flex items-end gap-4">
           <FormProvider {...form}>
             <form className="flex gap-4 items-end">
-              <FormInput name="name" label="Name" className="min-w-[250px]" />
-              <FormInput
-                name="email"
-                label="Email"
-                type="text"
-                className="min-w-[250px]"
-              />
+              {searchFields.map((props) => (
+                <FormInput
+                  key={props.name}
+                  {...props}
+                  className="min-w-[250px]"
+                />
+              ))}
 
-              <Button variant="outline" onClick={onSearch}>
-                <SearchIcon />
-                Search
-              </Button>
-              <Button variant="ghost" onClick={onReset}>
-                Reset
-                <Cross2Icon />
-              </Button>
+              <SearchButton onClick={onSearch} />
+              <CrossButton onClick={onReset} />
             </form>
           </FormProvider>
         </div>
@@ -267,11 +236,18 @@ function StudentTable() {
       </div>
       <TableColumnToggler table={table} />
       <div
-        className="rounded-md border "
-        //onScroll={(e) => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
-        ref={tableContainerRef}
+        ref={tableRef}
+        style={{
+          height: `790px`,
+          width: `100%`,
+          overflow: "auto",
+        }}
       >
-        <ReactTable table={table} isLoading={isFetching} />
+        <ReactTable
+          table={table}
+          isLoading={isLoading}
+          rowVirtualizer={rowVirtualizer}
+        />
       </div>
     </div>
   );

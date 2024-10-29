@@ -1,21 +1,19 @@
 import { Table } from "@/components/ui/table";
-import type { Table as TableType } from "@tanstack/react-table";
 import { FullTableHeader } from "./FullTableHeader";
 import { FullTableBody } from "./FullTableBody";
-import { TablePagination } from "./TablePagingation";
+import { FullTableBodyProps } from "./FullTableBody";
 
-interface ReactTableProps<TData> {
-  table: TableType<TData>;
-  isLoading?: boolean;
-}
+type ReactTableProps<TData> = FullTableBodyProps<TData>;
 
-const ReactTable = <T,>({ table, isLoading }: ReactTableProps<T>) => {
+const ReactTable = <T,>({ table, ...props }: ReactTableProps<T>) => {
   return (
     <div className="border rounded-md">
       <Table>
-        <FullTableHeader table={table} />
-        <FullTableBody table={table} isLoading={isLoading} />
-        <TablePagination />
+        <FullTableHeader
+          table={table}
+          className="sticky top-0 !bg-border z-[1] rounded-t-md"
+        />
+        <FullTableBody table={table} {...props} />
       </Table>
     </div>
   );

@@ -1,9 +1,17 @@
 import { AxiosError } from "axios";
 
-interface IRes<Data> {
+type IPaginated = {
+  limit: number;
+  page: number;
+  skip: number;
+  total: number;
+};
+
+interface IRes<Data, isPaginated extends boolean = false> {
   data: Data;
   message: string;
   success: boolean;
+  paginate: isPaginated extends true ? IPaginated : null;
 }
 
 type ITimeStamps = {
@@ -13,7 +21,7 @@ type ITimeStamps = {
 
 type ServerError = AxiosError<IRes<never>>;
 
-export type { IRes, ITimeStamps, ServerError };
+export type { IRes, ITimeStamps, ServerError, IPaginated };
 
 export * from "./admin";
 export * from "./auth";

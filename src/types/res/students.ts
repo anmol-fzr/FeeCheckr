@@ -1,6 +1,6 @@
-import { IRes } from ".";
+import { IRes, ITimeStamps } from ".";
 
-interface IStudent {
+interface IStudent extends ITimeStamps {
   _id: string;
   email: string;
   password: string;
@@ -8,8 +8,6 @@ interface IStudent {
   batch: number;
   isVerified: boolean;
   details?: IStudentDetails;
-  createdAt: string;
-  updatedAt: string;
 }
 
 interface IStudentDetails {
@@ -21,7 +19,7 @@ interface IStudentDetails {
   updatedAt: string;
 }
 
-type IResGetStudents = IRes<IStudent[]>;
+type IResGetStudents = IRes<IStudent[], true>;
 
 export type { IResGetStudents };
 export type { IStudent, IStudentDetails };
