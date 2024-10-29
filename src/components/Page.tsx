@@ -14,7 +14,7 @@ const Page = ({
 }: PageProps) => {
   desc ??= `Manage All ${title}.`;
   return (
-    <div className="h-fit space-y-4 ">
+    <div className="h-fit space-y-4 p-4">
       <div className="flex justify-between ">
         <PageHeader title={title} desc={desc} />
         <Header />
