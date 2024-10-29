@@ -129,3 +129,19 @@ a[data-sidebar="menu-sub-button"].active,
 a[data-sidebar="menu-button"].active {
   @apply bg-primary text-white;
 }
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-muted rounded;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-foreground/75 rounded;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
