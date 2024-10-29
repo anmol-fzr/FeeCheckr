@@ -9,7 +9,7 @@ type IPaginateParams = {
 const initialPageParam: IPaginateParams = {
   page: 1,
   size: 10,
-};
+} as const;
 
 const getNextPageParam: GetNextPageParamFunction<
   IPaginateParams,

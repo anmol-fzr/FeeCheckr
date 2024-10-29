@@ -1,10 +1,12 @@
 import { axiosInst } from "@/config";
 import { IResGetFee, IResGetFees } from "@/types";
+import { IReqParams } from "@/types";
 
 const uri = "/fees";
 
 const FEES = {
-  GET: () => axiosInst.get<IResGetFees, IResGetFees>(`${uri}`),
+  GET: (params: IReqParams) =>
+    axiosInst.get<IResGetFees, IResGetFees>(`${uri}`, { params }),
   ONE: (feesId: string) =>
     axiosInst.get<IResGetFee, IResGetFee>(`${uri}/${feesId}`),
   //CREATE: (data: IReqCreateClerk) =>

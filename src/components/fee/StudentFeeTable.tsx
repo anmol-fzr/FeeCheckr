@@ -1,16 +1,27 @@
 import * as React from "react";
 import { ColumnDef, useReactTable } from "@tanstack/react-table";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { API } from "@/service";
 import { IStudent, IResGetFees } from "@/types";
-import { batchToClgYear, formatCurrency, formatDateTime } from "@/utils";
+import { batchToClgYear, formatCurrency } from "@/utils";
 import {
+  getNextPageParam,
+  initialPageParam,
   TableActionsMenu,
+  TableColCreatedAt,
   TableColumnHeader,
   TableColumnToggler,
+  TableColUpdatedAt,
   TableId,
-} from "@/components/table";
-import { useGetTableProps, usePageContext } from "@/hooks";
+  SearchButton,
+  CrossButton,
+} from "@/components";
+import {
+  useGetTableProps,
+  useInfinitePage,
+  usePageContext,
+  useReactTableVirtualizer,
+} from "@/hooks";
 import { ReactTable } from "../table/ReactTable";
 import { FacetedFilter } from "../table/FacetedFilter";
 import { Button } from "../ui";
@@ -25,32 +36,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { FormInput } from "@/components";
 import { formatOrdinals } from "@/lib/utils";
 import { FeeStatusBadge } from "@/pages";
-
-const proComp = [
-  {
-    label: "Complete",
-    value: "complete",
-  },
-  {
-    label: "UnComplete",
-    value: "uncomplete",
-  },
-];
-
-const statuses = [
-  {
-    value: "2021",
-    label: "2021",
-  },
-  {
-    value: "2022",
-    label: "2022",
-  },
-  {
-    value: "2024",
-    label: "2024",
-  },
-];
+import { proComp, statuses } from "@/utils/facets";
 
 type IFee = IResGetFees["data"][0];
 
@@ -63,14 +49,17 @@ function StudentFeeTable() {
     Record<string, string | string[]>
   >({});
 
-  const tableContainerRef = React.useRef<HTMLDivElement>(null);
+  const tableRef = React.useRef<HTMLDivElement>(null);
 
   const { handleEdit, handleDelete } = usePageContext();
 
-  const { isLoading, data } = useQuery({
-    queryKey: ["FEES"] as const,
-    queryFn: () => API.FEES.GET(),
-  });
+  const { isLoading, data, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useInfiniteQuery({
+      initialPageParam,
+      queryKey: ["FEES"] as const,
+      queryFn: ({ pageParam }) => API.FEES.GET(pageParam),
+      getNextPageParam,
+    });
 
   const columns: ColumnDef<IFee>[] = React.useMemo(
     () => [
@@ -113,7 +102,7 @@ function StudentFeeTable() {
           <TableColumnHeader column={column} title="Amount" />
         ),
         cell: ({ row }) => {
-          const amount = row.getValue("amount");
+          const amount = row.original.amount;
           const fmtd = formatCurrency(amount);
           return fmtd;
         },
@@ -125,14 +114,7 @@ function StudentFeeTable() {
         ),
         cell: ({ cell }) => {
           const status = cell.row.original.status;
-          return (
-            <>
-              <FeeStatusBadge status={status} />
-              {/*
-              <Button variant="ghost">ghost</Button>
-                */}
-            </>
-          );
+          return <FeeStatusBadge status={status} />;
         },
       },
       {
@@ -157,34 +139,20 @@ function StudentFeeTable() {
         header: ({ column }) => (
           <TableColumnHeader column={column} title="Created At" />
         ),
-        cell: ({ row }) => {
-          const date = row.getValue("createdAt");
-          const formatted = formatDateTime(date);
-          return <div className="font-medium">{formatted}</div>;
-        },
+        cell: TableColCreatedAt,
       },
       {
         accessorKey: "updatedAt",
         header: ({ column }) => (
           <TableColumnHeader column={column} title="Updated At" />
         ),
-        cell: ({ row }) => {
-          const updatedAt = row.getValue("updatedAt");
-          const createdAt = row.getValue("createdAt");
-          return (
-            <div className="font-medium">
-              {createdAt === updatedAt
-                ? "Never Updated"
-                : formatDateTime(updatedAt)}
-            </div>
-          );
-        },
+        cell: TableColUpdatedAt,
       },
       {
         id: "actions",
         header: "Actions",
         cell: ({ row }) => {
-          const _id = row.getValue("_id");
+          const _id = row.original._id;
           const onEdit = () => handleEdit(_id);
           const onDelete = () => handleDelete(_id);
           return <TableActionsMenu {...{ onEdit, onDelete }} />;
@@ -194,13 +162,28 @@ function StudentFeeTable() {
     [handleEdit, handleDelete],
   );
 
+  const allRows = React.useMemo(
+    () => (data ? data.pages.flatMap((d) => d.data) : []),
+    [data],
+  );
   const table = useReactTable<IStudent>({
-    data: isLoading ? [] : data?.data,
+    data: allRows,
     columns,
     ...tableProps,
   });
 
-  //const haveFiltersOn =
+  const rowVirtualizer = useReactTableVirtualizer({
+    table,
+    tableRef,
+  });
+
+  useInfinitePage({
+    rowVirtualizer,
+    allRows,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  });
 
   const onSearch = React.useCallback(
     debounce((values?: any) => {
@@ -242,14 +225,8 @@ function StudentFeeTable() {
                 className="min-w-[250px]"
               />
 
-              <Button variant="outline" onClick={onSearch}>
-                <SearchIcon />
-                Search
-              </Button>
-              <Button variant="ghost" onClick={onReset}>
-                Reset
-                <Cross2Icon />
-              </Button>
+              <SearchButton onClick={onSearch} />
+              <CrossButton onClick={onReset} />
             </form>
           </FormProvider>
         </div>
@@ -271,11 +248,18 @@ function StudentFeeTable() {
         <TableColumnToggler table={table} />
       </div>
       <div
-        className="rounded-md border"
-        //onScroll={(e) => fetchMoreOnBottomReached(e.target as HTMLDivElement)}
-        ref={tableContainerRef}
+        ref={tableRef}
+        style={{
+          height: `790px`,
+          width: `100%`,
+          overflow: "auto",
+        }}
       >
-        <ReactTable table={table} />
+        <ReactTable
+          table={table}
+          isLoading={isLoading}
+          rowVirtualizer={rowVirtualizer}
+        />
       </div>
     </div>
   );

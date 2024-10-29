@@ -26,6 +26,6 @@ interface Student {
   updatedAt: string;
 }
 
-type IResGetFees = IRes<Root[]>;
+type IResGetFees = IRes<Root[], true>;
 
 export type { IResGetFee, IResGetFees };
