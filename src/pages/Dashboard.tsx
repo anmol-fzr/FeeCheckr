@@ -5,29 +5,30 @@ import { fbRealTimeDB } from "@/config";
 import { Alert, AlertTitle, AlertDescription } from "@/components";
 
 const Users = () => {
-  const [settings, setSettings] = useState<Record<string, boolean>>({});
+  const [settings, setSettings] = useState({
+    isFormOpen: false,
+  });
 
   useEffect(() => {
     const settingsRef = ref(fbRealTimeDB);
     onValue(settingsRef, (snapshot) => {
       const data = snapshot.val();
-      setSettings(data);
+      setSettings(data.settings);
     });
   }, []);
 
   return (
     <>
-      <Alert
-        variant="caution"
-        //className="w-full flex items-end justify-between gap-6 flex-wrap animate-in fade-in"
-      >
-        <div>
-          <AlertTitle> 📢 Attention !</AlertTitle>
-          <AlertDescription>
-            <p>Fee forms are Open, student can fill forms.</p>
-          </AlertDescription>
-        </div>
-      </Alert>
+      {settings.isFormOpen && (
+        <Alert variant="caution">
+          <div>
+            <AlertTitle> 📢 Attention !</AlertTitle>
+            <AlertDescription>
+              <p>Fee forms are Open, student can fill forms.</p>
+            </AlertDescription>
+          </div>
+        </Alert>
+      )}
       <div className=" grid grid-cols-4 gap-12 w-full">
         <Chart />
         <Chart />

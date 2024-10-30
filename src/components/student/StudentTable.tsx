@@ -230,10 +230,8 @@ function StudentTable() {
 
   const onReset = useCallback(() => {
     resetFilterParams();
+    form.reset();
     resetFilters();
-    //Object.entries(initialFilters).forEach(([key, value]) => {
-    //  setFilter(key, value);
-    //});
   }, []);
 
   return (
