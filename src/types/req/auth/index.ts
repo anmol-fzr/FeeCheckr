@@ -3,4 +3,6 @@ type IReqLogin = {
   password: string;
 };
 
-export type { IReqLogin };
+type IReqUpdateAccount = Pick<IReqLogin, "password">;
+
+export type { IReqLogin, IReqUpdateAccount };

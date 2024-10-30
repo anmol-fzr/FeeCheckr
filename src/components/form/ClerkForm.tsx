@@ -198,7 +198,12 @@ const BaseClerkForm = <T extends FieldValues>({
         <FormInput name="name" label="Name" />
         <FormInput name="mobile" label="Mobile" type="number" />
         <FormInput name="email" label="Email Address" type="email" />
-        <FormInput name="password" label="Password" type="text" />
+        <FormInput
+          name="password"
+          label="Password"
+          type="text"
+          placeholder="New Password"
+        />
         <div className="mt-4">
           <div className="flex gap-4">
             <Button

@@ -22,7 +22,7 @@ const Navbar = () => {
   const role = useAuthStore((state) => state.creds.role)?.toUpperCase();
   const navigate = useNavigate();
 
-  const toSettings = () => navigate("/settings");
+  const toSettings = () => navigate("/settings/ui");
 
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">

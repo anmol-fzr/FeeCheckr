@@ -7,6 +7,7 @@ import { registerStore } from "@/utils";
 const creds = {
   isLogin: false,
   token: null,
+  email: "",
   name: null,
   role: null,
 } as const;

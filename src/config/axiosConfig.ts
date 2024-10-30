@@ -3,7 +3,7 @@ import { envs } from "@/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import qs from "querystring";
 
-const { VITE_API_URL: baseURL } = envs;
+const baseURL = envs.SERVER_URL;
 
 const validateStatus = (status: number) => {
   if (status === 401) {
@@ -33,7 +33,6 @@ axiosInst.interceptors.response.use(
 );
 
 const logout = () => {
-  console.log("logout Called axiosConfig.ts:31");
   useAuthStore.getState().resetCreds();
   window.location.reload();
 };

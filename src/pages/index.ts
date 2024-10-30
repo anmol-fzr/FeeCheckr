@@ -1,5 +1,5 @@
 export * from "./auth";
-export * from "./Settings";
+export * from "./settings";
 export * from "./Clerk";
 export * from "./Student";
 export * from "./StudentOnlyPage";

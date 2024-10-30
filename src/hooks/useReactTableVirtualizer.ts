@@ -14,7 +14,7 @@ const useReactTableVirtualizer = <TData>({
     count: table.getRowModel().rows.length,
     estimateSize: () => 72,
     getScrollElement: () => tableRef.current,
-    overscan: 10,
+    overscan: 1,
   });
 };
 

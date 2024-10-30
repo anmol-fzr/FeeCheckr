@@ -40,13 +40,14 @@ export function LoginForm() {
     mutationFn: API.AUTH.LOGIN,
     onSuccess(res) {
       console.log({ res });
-      const { token, role, name } = res.data;
+      const { token, role, name, email } = res.data;
 
       updateCreds({
         isLogin: true,
         token,
         role,
         name,
+        email,
       });
 
       toast.success(res.message, { id });

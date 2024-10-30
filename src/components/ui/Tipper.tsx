@@ -4,18 +4,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ReactNode } from "react";
+import { ReactNode, ComponentProps } from "react";
 
-type TipperProps = {
+type TipperProps = ComponentProps<typeof Tooltip> & {
   children: ReactNode;
   tooltip: string;
 };
 
-const Tipper = ({ children, tooltip }: TipperProps) => {
+const Tipper = ({ children, tooltip, ...props }: TipperProps) => {
   return (
     <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger>{children}</TooltipTrigger>
+      <Tooltip {...props}>
+        <TooltipTrigger type="button">{children}</TooltipTrigger>
         <TooltipContent>
           <p>{tooltip}</p>
         </TooltipContent>

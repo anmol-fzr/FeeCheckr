@@ -5,4 +5,9 @@ const loginSchema = object({
   password: string().label("Password").required(),
 });
 
-export { loginSchema };
+const updateAccountSchema = object({
+  email: string().label("Email"),
+  password: string().label("Password").required(),
+});
+
+export { loginSchema, updateAccountSchema };

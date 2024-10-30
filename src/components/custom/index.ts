@@ -4,3 +4,4 @@ export * from "./GoBackButton";
 export * from "./Link";
 export * from "./StatusBadge";
 export * from "./buttons";
+export * from "./settings";

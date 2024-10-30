@@ -15,9 +15,16 @@ const Layout = () => {
     }
   }, [isLogin]);
 
+  const mql = window.matchMedia(`(min-width: 1920px)`).matches;
+
+  let open;
+  if (mql) {
+    open = true;
+  }
+
   return (
     <SidebarProvider>
-      <AppSidebar variant="floating" defaultChecked={false} />
+      <AppSidebar variant="floating" defaultChecked={open} />
       <SidebarInset>
         <Navbar />
         <div className="flex flex-1 flex-col gap-4 p-3">

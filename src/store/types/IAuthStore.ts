@@ -5,6 +5,7 @@ type Role = (typeof roles)[number];
 type ICreds = {
   token: string | null;
   isLogin: boolean;
+  email: string;
   name: string;
   role: Role;
 };
