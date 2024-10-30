@@ -3,12 +3,13 @@ import { ColumnDef, useReactTable } from "@tanstack/react-table";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { API } from "@/service";
 import { IAdminCreatedBy, IClerk } from "@/types";
-import { formatDateTime } from "@/utils";
 import { Tipper } from "@/components";
 import {
   TableActionsMenu,
+  TableColCreatedAt,
   TableColumnHeader,
   TableColumnToggler,
+  TableColUpdatedAt,
   TableId,
 } from "@/components/table";
 import {
@@ -108,28 +109,14 @@ function ClerkTable() {
         header: ({ column }) => (
           <TableColumnHeader column={column} title="Created At" />
         ),
-        cell: ({ row }) => {
-          const date = row.getValue("createdAt");
-          const formatted = formatDateTime(date);
-          return <div className="font-medium">{formatted}</div>;
-        },
+        cell: TableColCreatedAt,
       },
       {
         accessorKey: "updatedAt",
         header: ({ column }) => (
           <TableColumnHeader column={column} title="Updated At" />
         ),
-        cell: ({ row }) => {
-          const updatedAt = row.getValue("updatedAt");
-          const createdAt = row.getValue("createdAt");
-          return (
-            <div className="font-medium">
-              {createdAt === updatedAt
-                ? "Never Updated"
-                : formatDateTime(updatedAt)}
-            </div>
-          );
-        },
+        cell: TableColUpdatedAt,
       },
       {
         id: "actions",

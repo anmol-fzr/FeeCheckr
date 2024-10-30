@@ -2,7 +2,7 @@ import * as React from "react";
 import { ColumnDef, useReactTable } from "@tanstack/react-table";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { API } from "@/service";
-import { IStudent, IResGetFees } from "@/types";
+import { IResGetFees } from "@/types";
 import { batchToClgYear, formatCurrency } from "@/utils";
 import {
   getNextPageParam,
@@ -13,8 +13,7 @@ import {
   TableColumnToggler,
   TableColUpdatedAt,
   TableId,
-  SearchButton,
-  CrossButton,
+  SearchForm,
 } from "@/components";
 import {
   useGetTableProps,
@@ -24,26 +23,52 @@ import {
 } from "@/hooks";
 import { ReactTable } from "../table/ReactTable";
 import { FacetedFilter } from "../table/FacetedFilter";
-import { Button } from "../ui";
-import {
-  MagnifyingGlassIcon as SearchIcon,
-  Cross2Icon,
-} from "@radix-ui/react-icons";
+import { FormInputProps } from "../ui";
 import debounce from "lodash.debounce";
-import { useSet } from "@uidotdev/usehooks";
-import { H3 } from "../typography";
-import { FormProvider, useForm } from "react-hook-form";
-import { FormInput } from "@/components";
+import { useForm } from "react-hook-form";
 import { formatOrdinals } from "@/lib/utils";
 import { FeeStatusBadge } from "@/pages";
-import { proComp, statuses } from "@/utils/facets";
+import { feeType, semOpts, statuses } from "@/utils/facets";
+import { useFilters } from "@/hooks/useFilters";
+import { useNavigate } from "react-router-dom";
+import { feeStatuses, feeStatusOptions, feeTypes, sems } from "@/utils/options";
 
 type IFee = IResGetFees["data"][0];
 
+const initialFilters = {
+  batch: [],
+  status: feeStatuses,
+  sem: sems,
+  feeType: feeTypes,
+};
+
+const filterFields = [
+  {
+    title: "Batch",
+    options: statuses,
+    name: "batch",
+  },
+  {
+    title: "Fee Status",
+    options: feeStatusOptions,
+    name: "status",
+  },
+  {
+    title: "Semester",
+    options: semOpts,
+    name: "sem",
+  },
+  {
+    title: "Fee Type",
+    options: feeType,
+    name: "feeType",
+  },
+];
+
 function StudentFeeTable() {
   const tableProps = useGetTableProps();
-  const selectedBatchs = useSet<string>();
-  const selectedCompletions = useSet<string>(["complete", "uncomplete"]);
+  const { filters, getFilters, resetFilters } = useFilters(initialFilters);
+  const navigate = useNavigate();
 
   const [filterParams, setFilterParams] = React.useState<
     Record<string, string | string[]>
@@ -51,13 +76,14 @@ function StudentFeeTable() {
 
   const tableRef = React.useRef<HTMLDivElement>(null);
 
-  const { handleEdit, handleDelete } = usePageContext();
+  const { handleEdit } = usePageContext();
 
   const { isLoading, data, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useInfiniteQuery({
       initialPageParam,
-      queryKey: ["FEES"] as const,
-      queryFn: ({ pageParam }) => API.FEES.GET(pageParam),
+      queryKey: ["FEES", filterParams] as const,
+      queryFn: ({ pageParam, queryKey }) =>
+        API.FEES.GET({ ...pageParam, ...queryKey[1] }),
       getNextPageParam,
     });
 
@@ -71,7 +97,7 @@ function StudentFeeTable() {
       {
         accessorKey: "sbCollRef",
         header: ({ column }) => (
-          <TableColumnHeader column={column} title="Student Name" />
+          <TableColumnHeader column={column} title="SB Collect Ref no." />
         ),
       },
       {
@@ -154,19 +180,20 @@ function StudentFeeTable() {
         cell: ({ row }) => {
           const _id = row.original._id;
           const onEdit = () => handleEdit(_id);
-          const onDelete = () => handleDelete(_id);
-          return <TableActionsMenu {...{ onEdit, onDelete }} />;
+          const onView = () => navigate(_id);
+          return <TableActionsMenu {...{ onView, onEdit }} />;
         },
       },
     ],
-    [handleEdit, handleDelete],
+    [handleEdit, navigate],
   );
 
   const allRows = React.useMemo(
     () => (data ? data.pages.flatMap((d) => d.data) : []),
     [data],
   );
-  const table = useReactTable<IStudent>({
+
+  const table = useReactTable({
     data: allRows,
     columns,
     ...tableProps,
@@ -186,62 +213,42 @@ function StudentFeeTable() {
   });
 
   const onSearch = React.useCallback(
-    debounce((values?: any) => {
-      const batch = Array.from(selectedBatchs);
-      const completion = Array.from(selectedCompletions);
+    debounce(() => {
+      const newFilterParams = getFilters();
+
       setFilterParams({
-        ...values,
-        batch,
-        completion,
+        //...values,
+        ...newFilterParams,
       });
-    }, 250),
-    [selectedBatchs],
+    }, 100),
+    [],
   );
 
   const form = useForm({});
 
   const onReset = React.useCallback(() => {
     setFilterParams({});
-    selectedBatchs.clear();
-    selectedCompletions.add("complete");
-    selectedCompletions.add("uncomplete");
+    resetFilters();
   }, []);
 
   return (
     <div className="w-full">
       <div className="flex flex-col py-4">
-        <H3>Search</H3>
+        <SearchForm
+          {...form}
+          onSearch={onSearch}
+          onReset={onReset}
+          fields={searchFields}
+        />
         <div className="flex items-end gap-4 py-4">
-          <FormProvider {...form}>
-            <form
-              className="flex gap-4 items-end"
-              onSubmit={form.handleSubmit(onSearch)}
-            >
-              <FormInput name="name" label="Name" className="min-w-[250px]" />
-              <FormInput
-                name="email"
-                label="Email"
-                type="text"
-                className="min-w-[250px]"
-              />
-
-              <SearchButton onClick={onSearch} />
-              <CrossButton onClick={onReset} />
-            </form>
-          </FormProvider>
-        </div>
-        <div className="flex items-end gap-4 py-4">
-          <FacetedFilter
-            title="Batch"
-            options={statuses}
-            {...{ selected: selectedBatchs }}
-          />
-          <FacetedFilter
-            hideSearch
-            title="Profile Completed"
-            options={proComp}
-            {...{ selected: selectedCompletions }}
-          />
+          {filterFields.map(({ title, options, name }) => (
+            <FacetedFilter
+              key={name}
+              title={title}
+              options={options}
+              selected={filters[name]}
+            />
+          ))}
         </div>
       </div>
       <div className="flex items-center gap-8 py-4">
@@ -266,3 +273,14 @@ function StudentFeeTable() {
 }
 
 export { StudentFeeTable };
+
+const searchFields: FormInputProps[] = [
+  {
+    name: "name",
+    label: "Name",
+  },
+  //{
+  //  name: "email",
+  //  label: "Email",
+  //},
+];

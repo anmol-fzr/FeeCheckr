@@ -3,6 +3,8 @@ import { envs } from "./envs";
 import { baseURL } from "@/config";
 import { useSettingsStore } from "@/store";
 import { formatOrdinals } from "@/lib/utils";
+import { InfiniteData } from "@tanstack/react-query";
+import { IRes } from "@/types";
 
 function registerStore(store: ReturnType<typeof create>, name: string) {
   if (
@@ -70,10 +72,24 @@ const batchToClgYear = (batch: number, withParenthesis = true) => {
   return value;
 };
 
+const findFromInfiniteData = <TData extends Object>(
+  cache: InfiniteData<IRes<TData[], true>>,
+  predicate: (value: TData, index: number, obj: TData[]) => boolean,
+) => {
+  let foundObj: TData | undefined;
+
+  for (const page of cache.pages) {
+    foundObj = page.data.find(predicate);
+    if (foundObj) break;
+  }
+  return foundObj;
+};
+
 export {
   registerStore,
   getQueryKey,
   formatDateTime,
   formatCurrency,
   batchToClgYear,
+  findFromInfiniteData,
 };

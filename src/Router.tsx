@@ -1,6 +1,5 @@
 import { Routes, Route } from "react-router-dom";
 import {
-  NotFound,
   Users,
   Login,
   Clerk,

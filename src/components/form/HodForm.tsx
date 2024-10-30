@@ -9,32 +9,34 @@ import {
 import { useMetaStore } from "@/store";
 import { newHodSchema, updateHodSchema } from "@/schema";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  InfiniteData,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { API } from "@/service";
-import { IReqCreateAdmin, IReqUpdateAdmin, IRes, IResGetAdmins } from "@/types";
+import {
+  IReqCreateAdmin,
+  IReqUpdateAdmin,
+  IResGetAdmins,
+  ServerError,
+} from "@/types";
 import { toast } from "sonner";
 import { usePageContext, usePageParams } from "@/hooks";
+import { useBaseForm } from "./useBaseForm";
+import { findFromInfiniteData } from "@/utils";
 
 let id = "add_hod_sheet";
+const queryKey = ["ADMIN"] as const;
 
-const useBaseForm = () => {
-  const queryClient = useQueryClient();
-
-  const { onOpenChange } = usePageContext();
-
-  const onError = (err: Error) => {
-    toast.error(err.response.data.message, { id });
-  };
-
-  const onSuccess = (res: IRes<any>) => {
-    queryClient.invalidateQueries({
-      queryKey: ["ADMIN"],
-    });
-    toast.success(res.message, { id });
-    onOpenChange(false);
-  };
-
-  return { onError, onSuccess };
+const fetchAdminById = async (dataId: string) => {
+  try {
+    return (await API.ADMIN.ONE(dataId)).data;
+  } catch (err) {
+    const error = err as ServerError;
+    toast.error(error.message);
+    return {};
+  }
 };
 
 const useUpdateDeleteForm = () => {
@@ -45,21 +47,21 @@ const useUpdateDeleteForm = () => {
   const methods = useForm({
     resolver: yupResolver(updateHodSchema),
     defaultValues: async () => {
-      const hodCache: IResGetAdmins | undefined = queryClient.getQueryData([
-        "ADMIN",
-      ]);
+      if (!dataId) {
+        return {};
+      }
+
+      const hodCache: InfiniteData<IResGetAdmins> | undefined =
+        queryClient.getQueryData(["ADMIN"]);
 
       if (hodCache === undefined) {
-        const admin = await API.ADMIN.ONE(dataId as string);
-        return admin.data;
+        return await fetchAdminById(dataId);
       }
 
-      const obj = hodCache.data.find(({ _id }) => _id === dataId);
+      const obj = findFromInfiniteData(hodCache, ({ _id }) => _id === dataId);
       if (obj === undefined) {
-        const admin = await API.ADMIN.ONE(dataId as string);
-        return admin.data;
+        return await fetchAdminById(dataId);
       }
-      obj.deptId = obj?.dept._id;
       return obj;
     },
     disabled: isDeleting,
@@ -81,7 +83,7 @@ const HodForm = () => {
 };
 
 const AddHodForm = () => {
-  const { onError, onSuccess } = useBaseForm();
+  const { onError, onSuccess } = useBaseForm(id, { queryKey });
 
   const methods = useForm({
     resolver: yupResolver(newHodSchema),
@@ -108,7 +110,7 @@ const AddHodForm = () => {
 };
 
 const UpdateHodForm = () => {
-  const { onError, onSuccess } = useBaseForm();
+  const { onError, onSuccess } = useBaseForm(id, { queryKey });
 
   const { dataId } = usePageParams();
 
@@ -141,7 +143,7 @@ const UpdateHodForm = () => {
 };
 
 const DeleteHodForm = () => {
-  const { onError, onSuccess } = useBaseForm();
+  const { onError, onSuccess } = useBaseForm(id, { queryKey });
 
   const { dataId } = usePageParams();
 

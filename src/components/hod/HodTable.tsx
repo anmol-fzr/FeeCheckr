@@ -1,27 +1,38 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { ColumnDef, useReactTable } from "@tanstack/react-table";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { API } from "@/service";
 import { IAdminCreatedBy, IDept } from "@/types";
-import { formatDateTime } from "@/utils";
 import { Tipper } from "@/components";
 import {
   TableActionsMenu,
+  TableColCreatedAt,
   TableColumnHeader,
   TableColumnToggler,
+  TableColUpdatedAt,
   TableId,
 } from "@/components/table";
-import { useGetTableProps, usePageContext } from "@/hooks";
-import { TablePagination } from "../table/TablePagingation";
+import {
+  useGetTableProps,
+  useInfinitePage,
+  usePageContext,
+  useReactTableVirtualizer,
+} from "@/hooks";
 import { ReactTable } from "../table/ReactTable";
+import { initialPageParam, getNextPageParam } from "@/components/table";
 
 function HodTable() {
   const tableProps = useGetTableProps();
 
-  const { isLoading, data } = useQuery({
-    queryKey: ["ADMIN"] as const,
-    queryFn: API.ADMIN.GET,
-  });
+  const tableRef = useRef<HTMLDivElement>(null);
+
+  const { isLoading, data, fetchNextPage, isFetchingNextPage, hasNextPage } =
+    useInfiniteQuery({
+      initialPageParam,
+      queryKey: ["ADMIN"],
+      queryFn: ({ pageParam }) => API.ADMIN.GET(pageParam),
+      getNextPageParam,
+    });
 
   const { handleEdit, handleDelete } = usePageContext();
 
@@ -88,28 +99,14 @@ function HodTable() {
         header: ({ column }) => (
           <TableColumnHeader column={column} title="Created At" />
         ),
-        cell: ({ row }) => {
-          const date = row.getValue("createdAt");
-          const formatted = formatDateTime(date);
-          return <div className="font-medium">{formatted}</div>;
-        },
+        cell: TableColCreatedAt,
       },
       {
         accessorKey: "updatedAt",
         header: ({ column }) => (
           <TableColumnHeader column={column} title="Updated At" />
         ),
-        cell: ({ row }) => {
-          const updatedAt = row.getValue("updatedAt");
-          const createdAt = row.getValue("createdAt");
-          return (
-            <div className="font-medium">
-              {createdAt === updatedAt
-                ? "Never Updated"
-                : formatDateTime(updatedAt)}
-            </div>
-          );
-        },
+        cell: TableColUpdatedAt,
       },
       {
         id: "actions",
@@ -125,19 +122,47 @@ function HodTable() {
     [],
   );
 
+  const allRows = useMemo(
+    () => (data ? data.pages.flatMap((d) => d.data) : []),
+    [data],
+  );
+
   const table = useReactTable({
-    data: isLoading ? [] : data.data,
+    data: allRows,
     columns,
     ...tableProps,
+  });
+
+  const rowVirtualizer = useReactTableVirtualizer({
+    table,
+    tableRef,
+  });
+
+  useInfinitePage({
+    rowVirtualizer,
+    allRows,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
   });
 
   return (
     <div className="flex flex-col gap-4 w-full">
       <TableColumnToggler table={table} />
-      <div className="rounded-md border">
-        <ReactTable table={table} />
+      <div
+        ref={tableRef}
+        style={{
+          height: `790px`,
+          width: `100%`,
+          overflow: "auto",
+        }}
+      >
+        <ReactTable
+          table={table}
+          isLoading={isLoading}
+          rowVirtualizer={rowVirtualizer}
+        />
       </div>
-      <TablePagination table={table} />
     </div>
   );
 }

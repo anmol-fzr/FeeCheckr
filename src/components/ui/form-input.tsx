@@ -11,7 +11,7 @@ export interface FormInputProps extends InputProps {
 
 const FormInput: FC<FormInputProps> = ({ label, ...props }) => {
   const { register, formState } = useFormContext();
-  const error = formState.errors[props.name]?.message?.toString();
+  const error = formState?.errors[props?.name]?.message?.toString();
   return (
     <div className="flex flex-col gap-0.5">
       <Label htmlFor={props.name}>{label}</Label>

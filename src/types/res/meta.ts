@@ -2,6 +2,7 @@ import { IRes } from ".";
 
 type Option = {
   label: string;
+  helper?: string;
   value: string;
 };
 

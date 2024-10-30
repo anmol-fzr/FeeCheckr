@@ -15,13 +15,15 @@ type FormSelectProps = {
   options: Option[];
   name: string;
   label: string;
+  placeholder?: string;
 };
 
-const FormSelect = ({ label, name, options }: FormSelectProps) => {
+const FormSelect = ({ label, name, options, placeholder }: FormSelectProps) => {
   const { control, formState } = useFormContext();
   const error = formState.errors[name]?.message?.toString();
+  placeholder ??= `Select ${label}`;
   return (
-    <div className="w-full flex flex-col gap-0.5">
+    <div className="w-full flex flex-col gap-1.5">
       <Label htmlFor={name}>{label}</Label>
       <Controller
         name={name}
@@ -29,7 +31,7 @@ const FormSelect = ({ label, name, options }: FormSelectProps) => {
         render={({ field: { onChange, value, disabled } }) => (
           <Select onValueChange={onChange} value={value} disabled={disabled}>
             <SelectTrigger id="framework">
-              <SelectValue placeholder="Select" />
+              <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent position="popper">
               {options.map(({ label, value }) => (

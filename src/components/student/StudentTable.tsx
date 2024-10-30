@@ -9,28 +9,32 @@ import {
   TableColumnToggler,
   TableId,
   StatusBadge,
-  FormInput,
   ReactTable,
   TableColCreatedAt,
   TableColUpdatedAt,
   FormInputProps,
-  SearchButton,
-  CrossButton,
+  SearchForm,
+  TableColNA,
 } from "@/components";
 import {
   useGetTableProps,
   useInfinitePage,
   useReactTableVirtualizer,
 } from "@/hooks";
-import { H3 } from "../typography";
 import debounce from "lodash.debounce";
-import { FormProvider, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { FacetedFilter } from "../table/FacetedFilter";
 import { useSet } from "@uidotdev/usehooks";
-import { proComp, boolOps, statuses } from "@/utils/facets";
+import {
+  batchFacets,
+  profileCompletedOpts,
+  profileVerifiedOpts,
+} from "@/utils/facets";
 import { initialPageParam, getNextPageParam } from "@/components";
 import { useFilterParams } from "@/hooks/query/useFilterParams";
 import { useNavigate } from "react-router-dom";
+import { batchToClgYear } from "@/utils";
+import { useFilters } from "@/hooks/useFilters";
 
 const searchFields: FormInputProps[] = [
   {
@@ -43,13 +47,40 @@ const searchFields: FormInputProps[] = [
   },
 ];
 
+const initialFilters = {
+  batch: [],
+  verified: [true, false],
+  profileCompleted: [true, false],
+} as const;
+
+const filterFields = [
+  {
+    title: "Batch",
+    options: batchFacets,
+    name: "batch",
+    hideSearch: false,
+  },
+  {
+    title: "Verified",
+    options: profileVerifiedOpts,
+    name: "verified",
+    hideSearch: true,
+  },
+  {
+    title: "Profile Completed",
+    options: profileCompletedOpts,
+    name: "profileCompleted",
+    hideSearch: true,
+  },
+] as const;
+
 function StudentTable() {
   const tableProps = useGetTableProps();
   const selectedBatchs = useSet<string>();
-  const selectedCompletions = useSet<string>(["complete", "uncomplete"]);
-  const selectedVerification = useSet<string>(["true", "false"]);
   const { filterParams, appendFilterParams, resetFilterParams } =
     useFilterParams({});
+
+  const { filters, resetFilters } = useFilters(initialFilters);
 
   const tableRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -68,7 +99,7 @@ function StudentTable() {
         ),
         cell: ({ cell }) => {
           const name = cell.row.original?.name;
-          return name ?? "N/A";
+          return name ?? <TableColNA />;
         },
       },
       {
@@ -97,7 +128,7 @@ function StudentTable() {
           <TableColumnHeader column={column} title="Mobile Number" />
         ),
         cell: ({ cell }) => {
-          return cell.row.original?.details?.mobile ?? "N/A";
+          return cell.row.original?.details?.mobile ?? <TableColNA />;
         },
       },
       {
@@ -105,8 +136,18 @@ function StudentTable() {
         header: ({ column }) => (
           <TableColumnHeader column={column} title="Batch" />
         ),
-        cell: ({ cell }) => {
-          return cell.row.original?.batch ?? "N/A";
+        cell: ({ row }) => {
+          const batch = row.original.batch;
+          return batch ? (
+            <p>
+              {batch}{" "}
+              <span className="text-muted-foreground">
+                {batchToClgYear(batch)}
+              </span>
+            </p>
+          ) : (
+            <span className="text-muted-foreground">N/A</span>
+          );
         },
       },
       {
@@ -174,9 +215,9 @@ function StudentTable() {
   const onSearch = useCallback(
     debounce(() => {
       const values = form.getValues();
-      const batch = Array.from(selectedBatchs);
-      const completion = Array.from(selectedCompletions);
-      const isVerified = Array.from(selectedVerification);
+      const batch = Array.from(filters.batch);
+      const completion = Array.from(filters.profileCompleted);
+      const isVerified = Array.from(filters.verified);
       appendFilterParams({
         ...values,
         batch,
@@ -189,49 +230,29 @@ function StudentTable() {
 
   const onReset = useCallback(() => {
     resetFilterParams();
-    selectedBatchs.clear();
-    selectedCompletions.add("complete");
-    selectedCompletions.add("uncomplete");
+    resetFilters();
+    //Object.entries(initialFilters).forEach(([key, value]) => {
+    //  setFilter(key, value);
+    //});
   }, []);
 
   return (
     <div className="flex flex-col gap-4 w-full ">
       <div className="flex flex-col gap-4 py-6">
-        <H3>Search</H3>
+        <SearchForm
+          {...form}
+          onSearch={onSearch}
+          onReset={onReset}
+          fields={searchFields}
+        />
         <div className="flex items-end gap-4">
-          <FormProvider {...form}>
-            <form className="flex gap-4 items-end">
-              {searchFields.map((props) => (
-                <FormInput
-                  key={props.name}
-                  {...props}
-                  className="min-w-[250px]"
-                />
-              ))}
-
-              <SearchButton onClick={onSearch} />
-              <CrossButton onClick={onReset} />
-            </form>
-          </FormProvider>
-        </div>
-        <div className="flex items-end gap-4">
-          <FacetedFilter
-            title="Batch"
-            options={statuses}
-            {...{ selected: selectedBatchs }}
-          />
-          <FacetedFilter
-            hideSearch
-            title="Verified"
-            options={boolOps}
-            {...{ selected: selectedVerification }}
-          />
-          <FacetedFilter
-            hideSearch
-            title="Profile Completed"
-            options={proComp}
-            {...{ selected: selectedCompletions }}
-          />
+          {filterFields.map(({ title, options, name, hideSearch }) => (
+            <FacetedFilter
+              key={name}
+              {...{ hideSearch, title, options }}
+              selected={filters[name]}
+            />
+          ))}
         </div>
       </div>
       <TableColumnToggler table={table} />

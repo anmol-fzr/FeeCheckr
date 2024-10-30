@@ -13,3 +13,4 @@ export * from "./auth";
 export * from "./admin";
 export * from "./dept";
 export * from "./clerk";
+export * from "./fee";

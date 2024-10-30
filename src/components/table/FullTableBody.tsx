@@ -3,6 +3,7 @@ import { Row, Table, flexRender } from "@tanstack/react-table";
 import { H3 } from "../typography";
 import { Loader2 } from "lucide-react";
 import { Virtualizer } from "@tanstack/react-virtual";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 interface FullTableBodyProps<TData> {
   table: Table<TData>;
@@ -15,12 +16,14 @@ const FullTableBody = <T,>({
   isLoading = false,
   rowVirtualizer,
 }: FullTableBodyProps<T>) => {
+  const [animateRef] = useAutoAnimate();
   const columnLen = table.getAllColumns().length;
 
   const { rows } = table.getRowModel();
 
   return (
     <TableBody
+      ref={animateRef}
       style={{
         width: "100%",
         position: "relative",
@@ -40,6 +43,7 @@ const FullTableBody = <T,>({
           const row = rows[virtualRow.index] as Row<T>;
           return (
             <TableRow
+              ref={animateRef}
               key={row.id}
               data-state={row.getIsSelected() && "selected"}
               style={{

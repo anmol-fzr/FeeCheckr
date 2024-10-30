@@ -11,7 +11,7 @@ const useBaseForm = (toastId: string, filters: InvalidateQueryFilters) => {
 
   const onError = useCallback(
     (err: ServerError) => {
-      toast.error(err?.response?.data.message, { id: toastId });
+      toast.error(err.message, { id: toastId });
     },
     [toastId],
   );

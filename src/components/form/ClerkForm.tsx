@@ -8,16 +8,36 @@ import {
 } from "react-hook-form";
 import { newClerkSchema, updateClerkSchema } from "@/schema";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  InfiniteData,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { API } from "@/service";
-import { IReqCreateClerk, IReqUpdateClerk, IResGetClerks } from "@/types";
+import {
+  IReqCreateClerk,
+  IReqUpdateClerk,
+  IResGetClerks,
+  ServerError,
+} from "@/types";
 import { toast } from "sonner";
 import { usePageContext, usePageParams } from "@/hooks";
 import { useBaseForm } from "./useBaseForm";
+import { findFromInfiniteData } from "@/utils";
 
 let id = "clerk_form";
 
 const queryKey = ["CLERK"];
+
+const fetchClerkById = async (dataId: string) => {
+  try {
+    return (await API.CLERK.ONE(dataId)).data;
+  } catch (err) {
+    const error = err as ServerError;
+    toast.error(error.message);
+    return {};
+  }
+};
 
 const useBaseClerkForm = () => {
   return useBaseForm(id, { queryKey });
@@ -31,18 +51,20 @@ const useUpdateDeleteForm = () => {
   const methods = useForm({
     resolver: yupResolver(updateClerkSchema),
     defaultValues: async () => {
-      const hodCache: IResGetClerks | undefined =
+      if (!dataId) {
+        return {};
+      }
+
+      const hodCache: InfiniteData<IResGetClerks> | undefined =
         queryClient.getQueryData(queryKey);
 
       if (hodCache === undefined) {
-        const admin = await API.CLERK.ONE(dataId as string);
-        return admin.data;
+        return await fetchClerkById(dataId);
       }
 
-      const obj = hodCache.data.find(({ _id }) => _id === dataId);
+      const obj = findFromInfiniteData(hodCache, ({ _id }) => _id === dataId);
       if (obj === undefined) {
-        const admin = await API.CLERK.ONE(dataId as string);
-        return admin.data;
+        return await fetchClerkById(dataId);
       }
       return obj;
     },

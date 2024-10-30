@@ -1,6 +1,5 @@
-import { useState, ComponentType, Dispatch, SetStateAction } from "react";
+import { ComponentType, Fragment } from "react";
 import { CheckIcon, PlusCircledIcon } from "@radix-ui/react-icons";
-import { Column } from "@tanstack/react-table";
 
 import { cn } from "@/lib/utils";
 import {
@@ -17,26 +16,38 @@ import {
   PopoverContent,
   PopoverTrigger,
   Separator,
+  StatusBadge,
 } from "@/components";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { BadgeProps } from "@mantine/core";
 
-interface DataTableFacetedFilterProps<TData, TValue> {
+interface DataTableFacetedFilterProps {
   title?: string;
   options: {
     label: string;
     value: string;
+    helper?: string;
     icon?: ComponentType<{ className?: string }>;
   }[];
   selected: Set<string>;
   hideSearch?: boolean;
 }
 
-export function FacetedFilter<TData, TValue>({
+const FilterBadge = (props: BadgeProps) => (
+  <Badge
+    variant="secondary"
+    className="rounded-sm px-1 font-normal"
+    {...props}
+  />
+);
+
+export function FacetedFilter({
   title,
   options,
   selected,
   hideSearch = false,
-}: DataTableFacetedFilterProps<TData, TValue>) {
-  //const [selectedValues, setSelectedValues] = useState(new Set<string>());
+}: DataTableFacetedFilterProps) {
+  const [animateRef] = useAutoAnimate();
 
   const selSize = selected?.size;
   const haveValues = selSize > 0;
@@ -55,26 +66,30 @@ export function FacetedFilter<TData, TValue>({
               >
                 {selSize}
               </Badge>
-              <div className="hidden space-x-1 lg:flex">
-                {selSize > 2 ? (
-                  <Badge
-                    variant="secondary"
-                    className="rounded-sm px-1 font-normal"
-                  >
-                    {selSize} selected
-                  </Badge>
+              <div className="hidden space-x-1 lg:flex" ref={animateRef}>
+                {selSize === options.length ? (
+                  <FilterBadge>All</FilterBadge>
+                ) : selSize > 2 ? (
+                  <FilterBadge>{selSize} selected</FilterBadge>
                 ) : (
                   options
                     .filter((option) => selected.has(option.value))
-                    .map((option) => (
-                      <Badge
-                        variant="secondary"
-                        key={option.value}
-                        className="rounded-sm px-1 font-normal"
-                      >
-                        {option.label}
-                      </Badge>
-                    ))
+                    .map(({ label, value }) => {
+                      return (
+                        <Fragment key={label}>
+                          {typeof value === "boolean" ? (
+                            <StatusBadge
+                              variant={value ? "green" : "red"}
+                              className="rounded-sm px-1 font-normal"
+                            >
+                              {label}
+                            </StatusBadge>
+                          ) : (
+                            <FilterBadge>{label}</FilterBadge>
+                          )}
+                        </Fragment>
+                      );
+                    })
                 )}
               </div>
             </>
@@ -118,6 +133,9 @@ export function FacetedFilter<TData, TValue>({
                       <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
                     )}
                     <span>{option.label}</span>
+                    <span className="text-muted-foreground">
+                      {option.helper}
+                    </span>
                   </CommandItem>
                 );
               })}
@@ -141,3 +159,5 @@ export function FacetedFilter<TData, TValue>({
     </Popover>
   );
 }
+
+export type { DataTableFacetedFilterProps };

@@ -25,7 +25,7 @@ type IAdminCreatedBy = ITimeStamps & {
   isCreatedByMe: boolean;
 };
 
-type IResGetAdmins = IRes<IAdmin[]>;
+type IResGetAdmins = IRes<IAdmin[], true>;
 type IResGetAdmin = IRes<IAdmin>;
 
 export type { IResGetAdmins, IResGetAdmin };

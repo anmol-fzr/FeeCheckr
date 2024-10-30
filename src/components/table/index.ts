@@ -16,13 +16,13 @@ const getNextPageParam: GetNextPageParamFunction<
   IRes<any, true>
 > = (lastPage, _, lastPageParam) => {
   const hasNextPage =
-    Math.ceil(lastPage.paginate.total / lastPageParam.size) >
-    lastPageParam.page;
+    Math.ceil(lastPage?.paginate?.total / lastPageParam?.size) >
+    lastPageParam?.page;
 
   return hasNextPage
     ? {
-        page: lastPageParam.page + 1,
-        size: lastPageParam.size,
+        page: lastPageParam?.page + 1,
+        size: lastPageParam?.size,
       }
     : null;
 };
