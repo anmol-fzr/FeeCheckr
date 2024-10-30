@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "bun run check && vite --host",
+    "check": "bun run ./check.ts",
     "build": "vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint-fix": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
@@ -38,6 +39,8 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "1.0.0",
+    "firebase": "^11.0.1",
+    "framer-motion": "^11.11.10",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.453.0",
     "mantine-datatable": "^7.12.4",
