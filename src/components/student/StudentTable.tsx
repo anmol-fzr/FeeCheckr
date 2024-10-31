@@ -15,7 +15,9 @@ import {
   FormInputProps,
   SearchForm,
   TableColNA,
+  Button,
 } from "@/components";
+import { EyeIcon } from "lucide-react";
 import {
   useGetTableProps,
   useInfinitePage,
@@ -165,12 +167,17 @@ function StudentTable() {
         cell: TableColUpdatedAt,
       },
       {
-        id: "actions",
-        header: "Actions",
+        id: "view",
+        header: "View",
         cell: ({ row }) => {
           const _id = row.original._id;
           const onView = () => navigate(_id);
-          return <TableActionsMenu {...{ onView }} />;
+          return (
+            <Button variant="ghost" onClick={onView} size="sm">
+              <EyeIcon />
+              View
+            </Button>
+          );
         },
       },
     ],

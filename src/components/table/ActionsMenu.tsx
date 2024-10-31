@@ -7,12 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui";
-import {
-  DotsHorizontalIcon,
-  Pencil1Icon,
-  TrashIcon,
-  EyeOpenIcon,
-} from "@radix-ui/react-icons";
+import { EyeIcon, PencilIcon, TrashIcon, Ellipsis } from "lucide-react";
 
 type TableActionsMenuProps = {
   onView?: () => void;
@@ -30,7 +25,7 @@ const TableActionsMenu = ({
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="h-8 w-8 p-0">
           <span className="sr-only">Open menu</span>
-          <DotsHorizontalIcon className="h-4 w-4" />
+          <Ellipsis className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -38,13 +33,13 @@ const TableActionsMenu = ({
         <DropdownMenuSeparator />
         {onView && (
           <DropdownMenuItem onClick={onView}>
-            <EyeOpenIcon className="w-4 h-4" />
+            <EyeIcon className="w-4 h-4" />
             View
           </DropdownMenuItem>
         )}
         {onEdit && (
           <DropdownMenuItem onClick={onEdit}>
-            <Pencil1Icon className="w-4 h-4" />
+            <PencilIcon className="w-4 h-4" />
             Edit
           </DropdownMenuItem>
         )}
