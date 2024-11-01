@@ -4,11 +4,9 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { API } from "@/service";
 import { IStudent } from "@/types";
 import {
-  TableActionsMenu,
   TableColumnHeader,
   TableColumnToggler,
   TableId,
-  StatusBadge,
   ReactTable,
   TableColCreatedAt,
   TableColUpdatedAt,
@@ -99,23 +97,9 @@ function StudentTable() {
         header: ({ column }) => (
           <TableColumnHeader column={column} title="Name" />
         ),
-        cell: ({ cell }) => {
-          const name = cell.row.original?.name;
+        cell: ({ row }) => {
+          const name = row.original.name;
           return name ?? <TableColNA />;
-        },
-      },
-      {
-        accessorKey: "isVerified",
-        header: ({ column }) => (
-          <TableColumnHeader column={column} title="Verified" />
-        ),
-        cell: ({ cell }) => {
-          const isVerified = cell.row.original.isVerified;
-          return (
-            <StatusBadge variant={isVerified ? "green" : "red"}>
-              {isVerified ? "Verified" : "Un Verified"}
-            </StatusBadge>
-          );
         },
       },
       {
@@ -129,8 +113,8 @@ function StudentTable() {
         header: ({ column }) => (
           <TableColumnHeader column={column} title="Mobile Number" />
         ),
-        cell: ({ cell }) => {
-          return cell.row.original?.details?.mobile ?? <TableColNA />;
+        cell: ({ row }) => {
+          return row.original.mobile ?? <TableColNA />;
         },
       },
       {
@@ -201,6 +185,9 @@ function StudentTable() {
   const table = useReactTable({
     data: allRows,
     columns,
+    meta: {
+      onRowDoubleClick: (row) => navigate(row._id),
+    },
     ...tableProps,
   });
 

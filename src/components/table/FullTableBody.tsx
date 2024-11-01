@@ -11,6 +11,13 @@ interface FullTableBodyProps<TData> {
   rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
 }
 
+declare module "@tanstack/react-table" {
+  // @ts-ignore
+  interface TableMeta<TData extends RowData> {
+    onRowDoubleClick: (d: TData) => void;
+  }
+}
+
 const FullTableBody = <T,>({
   table,
   isLoading = false,
@@ -20,6 +27,8 @@ const FullTableBody = <T,>({
   const columnLen = table.getAllColumns().length;
 
   const { rows } = table.getRowModel();
+
+  const onRowDoubleClick = table.options.meta?.onRowDoubleClick;
 
   return (
     <TableBody
@@ -49,6 +58,7 @@ const FullTableBody = <T,>({
               style={{
                 height: "72px",
               }}
+              onDoubleClick={() => onRowDoubleClick?.(row.original)}
             >
               {row.getVisibleCells().map((cell) => (
                 <TableCell key={cell.id}>

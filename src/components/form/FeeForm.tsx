@@ -1,4 +1,4 @@
-import { Button, FormInput, FormSelect } from "@/components";
+import { Button, FormInput, FormSelect, FormTextarea } from "@/components";
 import {
   FieldValues,
   FormProvider,
@@ -112,6 +112,8 @@ const BaseFeeForm = <T extends FieldValues>({
 
   const onCancel = () => onOpenChange(false);
 
+  const currFeeStatus = methods.watch("status");
+
   return (
     <FormProvider {...methods}>
       <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
@@ -119,6 +121,9 @@ const BaseFeeForm = <T extends FieldValues>({
         <FormInput name="sbCollRef" label="SB Collect Ref" disabled />
         <FormInput name="feeType" label="Fee Type" disabled />
         <FormSelect name="status" label="Status" options={feeStatusOptions} />
+        {currFeeStatus === "rejected" && (
+          <FormTextarea label="Rejection Reason" name="rejection" />
+        )}
         <div className="mt-4">
           <div className="flex gap-4">
             <Button

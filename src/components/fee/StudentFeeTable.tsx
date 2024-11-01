@@ -101,7 +101,7 @@ function StudentFeeTable() {
         ),
       },
       {
-        accessorKey: "student.details.name",
+        accessorKey: "student.name",
         header: ({ column }) => (
           <TableColumnHeader column={column} title="Student Name" />
         ),
@@ -144,12 +144,12 @@ function StudentFeeTable() {
         },
       },
       {
-        accessorKey: "student.details.batch",
+        accessorKey: "batch",
         header: ({ column }) => (
           <TableColumnHeader column={column} title="Batch" />
         ),
-        cell: ({ cell }) => {
-          const batch = cell.row.original.student.details.batch;
+        cell: ({ row }) => {
+          const batch = row.original.student.batch;
           return (
             <p>
               {batch}{" "}
@@ -196,6 +196,9 @@ function StudentFeeTable() {
   const table = useReactTable({
     data: allRows,
     columns,
+    meta: {
+      onRowDoubleClick: (row: IFee) => navigate(row._id),
+    },
     ...tableProps,
   });
 

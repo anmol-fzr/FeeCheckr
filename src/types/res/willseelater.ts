@@ -1,24 +1,7 @@
-import { IRes } from ".";
+import { IRes, ITimeStamps } from ".";
 import { IStudent } from ".";
 
-type Daum = IStudent & {
-  profile: Profile;
-  fees: IFee[];
-};
-
-interface Profile {
-  _id: string;
-  name: string;
-  mobile: number;
-  admissionNo: number;
-  rollNo: number;
-  batch: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface IFee {
-  _id: string;
+interface Fee extends ITimeStamps {
   studentId: string;
   sbCollRef: string;
   amount: number;
@@ -27,13 +10,11 @@ interface IFee {
   hostelFeeAmount: number;
   securityAmount: number;
   fineAmount: number;
-  status: "pending" | "accepted" | "rejected";
-  createdAt: string;
-  updatedAt: string;
-  isVerified: boolean;
+  status: string;
 }
 
-type IResGetStudent = IRes<Daum>;
+type StudentWithFee = IStudent & { fees: Fee[] };
+type IResGetStudent = IRes<StudentWithFee>;
 
 export type { IResGetStudent };
-export type { IFee };
+export type { Fee as IFee };

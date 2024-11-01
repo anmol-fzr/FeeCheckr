@@ -1,15 +1,16 @@
 import {
   TableActionsMenu,
+  TableColCreatedAt,
   TableColumnHeader as TableColHeader,
 } from "@/components/table";
 import { FeeStatusBadge } from "@/components";
 import { Card, CardContent } from "@/components/ui/card";
 import { ReactTable } from "@/components/table/ReactTable";
-import { useRouteParam } from "@/hooks";
+import { useReactTableVirtualizer, useRouteParam } from "@/hooks";
 import { formatOrdinals } from "@/lib/utils";
 import { API } from "@/service";
 import { IFee } from "@/types";
-import { batchToClgYear, formatCurrency, formatDateTime } from "@/utils";
+import { batchToClgYear, formatCurrency } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
 import {
   ColumnDef,
@@ -19,13 +20,13 @@ import {
 import { GoBackButton } from "@/components";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
-
-const year = new Date().getFullYear();
+import { useRef } from "react";
 
 const StudentOnlyPage = () => {
   let studentId = useRouteParam("studentId");
 
   const navigate = useNavigate();
+  const tableRef = useRef<HTMLDivElement>(null);
 
   const { isLoading, data } = useQuery({
     queryKey: ["STUDENTS", studentId] as const,
@@ -70,11 +71,7 @@ const StudentOnlyPage = () => {
       header: ({ column }) => (
         <TableColHeader column={column} title="Submitted" />
       ),
-      cell: ({ row }) => {
-        const date = row.getValue("createdAt");
-        const formatted = formatDateTime(date);
-        return <div className="font-medium">{formatted}</div>;
-      },
+      cell: TableColCreatedAt,
     },
     {
       accessorKey: "_id",
@@ -96,6 +93,11 @@ const StudentOnlyPage = () => {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const rowVirtualizer = useReactTableVirtualizer({
+    table,
+    tableRef,
+  });
+
   return (
     <>
       <GoBackButton />
@@ -106,21 +108,21 @@ const StudentOnlyPage = () => {
             <div className="grid gap-4 ">
               <div className="flex flex-col gap-2">
                 <h3 className="text-3xl font-bold leading-none">
-                  {data?.data?.profile?.name}
+                  {data?.data?.name}
                 </h3>
                 <p className="text-muted-foreground">
-                  {data?.data?.profile.batch}
-                  {batchToClgYear(data?.data?.profile.batch)}
+                  {data?.data?.batch}
+                  {/*
+                  {batchToClgYear(data?.data?.batch)}
+                    */}
                 </p>
-                <p className="text-muted-foreground">
-                  {data?.data?.profile.rollNo}
-                </p>
+                <p className="text-muted-foreground">{data?.data?.rollNo}</p>
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center space-x-3">
                   <Icon icon="solar:phone-line-duotone" fontSize={24} />
                   <p className="text-sm text-gray-500 font-medium">
-                    {data?.data?.profile?.mobile.toString()}
+                    {data?.data?.mobile.toString()}
                   </p>
                 </div>
                 <div className="flex items-center space-x-3">
@@ -131,7 +133,21 @@ const StudentOnlyPage = () => {
                 </div>
               </div>
             </div>
-            <ReactTable table={table} />
+
+            <div
+              ref={tableRef}
+              style={{
+                height: `790px`,
+                width: `100%`,
+                overflow: "auto",
+              }}
+            >
+              <ReactTable
+                table={table}
+                isLoading={isLoading}
+                rowVirtualizer={rowVirtualizer}
+              />
+            </div>
           </CardContent>
         </Card>
       )}

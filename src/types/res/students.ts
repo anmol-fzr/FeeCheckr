@@ -3,21 +3,28 @@ import { IRes, ITimeStamps } from ".";
 interface IStudent extends ITimeStamps {
   _id: string;
   email: string;
-  password: string;
   name: string;
-  batch: number;
-  isVerified: boolean;
-  details?: IStudentDetails;
-}
-
-interface IStudentDetails {
-  _id: string;
   mobile: number;
   admissionNo: number;
   rollNo: number;
-  createdAt: string;
-  updatedAt: string;
+  batch: number;
 }
+
+interface IStudentDetails extends ITimeStamps {}
+
+interface Fee extends ITimeStamps {
+  studentId: string;
+  sbCollRef: string;
+  amount: number;
+  sem: number;
+  feeType: string;
+  hostelFeeAmount: number;
+  securityAmount: number;
+  fineAmount: number;
+  status: string;
+}
+
+type StudentWithFee = IStudent & { fees: Fee[] };
 
 type IResGetStudents = IRes<IStudent[], true>;
 

@@ -1,19 +1,22 @@
 import { IFee } from "./willseelater";
-import { IRes } from ".";
+import { IRes, ITimeStamps } from ".";
 
 type IResGetFee = IRes<IFee>;
 
-type Root = IFee & {
-  student: Student;
-};
-
-interface Student {
+interface Root extends ITimeStamps {
   _id: string;
-  email: string;
-  password: string;
-  isVerified: boolean;
-  details: {
+  studentId: string;
+  sbCollRef: string;
+  amount: number;
+  sem: number;
+  feeType: string;
+  hostelFeeAmount: number;
+  securityAmount: number;
+  fineAmount: number;
+  status: "pending" | "accepted" | "rejected";
+  student: {
     _id: string;
+    email: string;
     name: string;
     mobile: number;
     admissionNo: number;
@@ -22,8 +25,6 @@ interface Student {
     createdAt: string;
     updatedAt: string;
   };
-  createdAt: string;
-  updatedAt: string;
 }
 
 type IResGetFees = IRes<Root[], true>;

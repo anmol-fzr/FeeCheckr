@@ -14,3 +14,5 @@ export * from "./popover";
 export * from "./separator";
 export * from "./table";
 export * from "./alert";
+export * from "./textarea";
+export * from "./form-textarea";
