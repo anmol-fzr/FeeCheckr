@@ -1,16 +1,16 @@
-import { object, string } from "yup";
+import { z } from "zod";
 
 // Perform Transformations here
-const envSchema = object({
-  VITE_API_URL: string().required(),
-  VITE_FIREBASE_API_KEY: string().required(),
-  VITE_FIREBASE_AUTH_DOMAIN: string().required(),
-  VITE_FIREBASE_DB_URL: string().required(),
-  VITE_FIREBASE_PROJECT_ID: string().required(),
-  VITE_FIREBASE_STORAGE_BUCKET: string().required(),
-  VITE_FIREBASE_MESSAGING_SENDER_ID: string().required(),
-  VITE_FIREBASE_APP_ID: string().required(),
-  VITE_FIREBASE_MEASUREMENT_ID: string().required(),
+const envSchema = z.object({
+  VITE_API_URL: z.string(),
+  VITE_FIREBASE_API_KEY: z.string(),
+  VITE_FIREBASE_AUTH_DOMAIN: z.string(),
+  VITE_FIREBASE_DB_URL: z.string(),
+  VITE_FIREBASE_PROJECT_ID: z.string(),
+  VITE_FIREBASE_STORAGE_BUCKET: z.string(),
+  VITE_FIREBASE_MESSAGING_SENDER_ID: z.string(),
+  VITE_FIREBASE_APP_ID: z.string(),
+  VITE_FIREBASE_MEASUREMENT_ID: z.string(),
 });
 
 export { envSchema };
