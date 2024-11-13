@@ -1,7 +1,7 @@
 import { IFee } from "./willseelater";
 import { IRes, ITimeStamps } from ".";
 
-type IResGetFee = IRes<IFee>;
+type IResGetFee = IRes<IFee & {pdfUri:string}>;
 
 interface Root extends ITimeStamps {
   _id: string;

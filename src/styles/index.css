@@ -146,3 +146,6 @@ a[data-sidebar="menu-button"].active {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+.react-pdf__Page {
+  @apply aspect-a4;
+}

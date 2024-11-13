@@ -51,6 +51,9 @@ export default {
           5: "hsl(var(--chart-5))",
         },
       },
+      aspectRatio: {
+        a4: 0.7,
+      },
     },
   },
   plugins: [require("@tailwindcss/forms"), require("tailwindcss-animate")],

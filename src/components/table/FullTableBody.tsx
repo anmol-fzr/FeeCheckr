@@ -58,6 +58,7 @@ const FullTableBody = <T,>({
               style={{
                 height: "72px",
               }}
+              className="cursor-pointer"
               onDoubleClick={() => onRowDoubleClick?.(row.original)}
             >
               {row.getVisibleCells().map((cell) => (
