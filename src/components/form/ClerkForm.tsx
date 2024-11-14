@@ -1,4 +1,4 @@
-import { Button, FormInput } from "@/components";
+import { Button, CancelButton, FormInput } from "@/components";
 import {
   FieldValues,
   FormProvider,
@@ -206,14 +206,9 @@ const BaseClerkForm = <T extends FieldValues>({
         />
         <div className="mt-4">
           <div className="flex gap-4">
-            <Button
-              {...commonProps}
-              type="button"
-              variant="outline"
-              onClick={onCancel}
-            >
+            <CancelButton {...commonProps} onClick={onCancel}>
               Cancel
-            </Button>
+            </CancelButton>
             {isDeleting && (
               <Button {...commonProps} variant="destructive">
                 Delete

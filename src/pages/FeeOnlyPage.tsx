@@ -5,20 +5,18 @@ import { IFee } from "@/types";
 import { formatCurrency, formatDateTime } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
 import {
-  Button,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
+  FeeForm,
   GoBackButton,
-  Link,
   StudenFeePdf,
 } from "@/components";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { FeeStatusBadge } from "./StudentOnlyPage";
-import { ChevronLeftIcon } from "@radix-ui/react-icons";
-import { pdfjs } from "react-pdf";
+import { useSearchParams } from "react-router-dom";
 
 type K = keyof IFee;
 type D = {
@@ -63,11 +61,16 @@ const fmts: Record<K, D> = {
 
 const FeeOnlyPage = () => {
   const feeId = useRouteParam("feeId");
+  const [_, setSearchParams] = useSearchParams();
 
   const { isLoading, data } = useQuery({
     queryKey: ["FEES", feeId] as const,
     queryFn: ({ queryKey }) => API.FEES.ONE(queryKey[1]),
   });
+
+  useEffect(() => {
+    setSearchParams({ _id: feeId });
+  }, [feeId, setSearchParams]);
 
   const uri = data?.data?.pdfUri;
 
@@ -75,38 +78,47 @@ const FeeOnlyPage = () => {
     <>
       <GoBackButton />
       <div className="flex gap-4 justify-between">
-        <Card className="w-full max-w-screen-md h-fit">
-          <CardHeader>
-            <CardTitle className="flex items-start justify-between">
-              Fee Details
-              {!isLoading && data?.data && (
-                <FeeStatusBadge status={data?.data?.status} />
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableBody>
-                {!isLoading &&
-                  data?.data &&
-                  Object.entries(data.data).map(([key, value]) => {
-                    const f = fmts[key];
-                    const shouldRender = f !== undefined;
-                    return (
-                      shouldRender && (
-                        <TableRow key={key}>
-                          <TableCell className="font-medium">
-                            {f.label}
-                          </TableCell>
-                          <TableCell>{f.fmt(value)}</TableCell>
-                        </TableRow>
-                      )
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        <div className="w-full flex flex-col gap-4">
+          <Card className="w-full max-w-screen-md h-fit">
+            <CardHeader>
+              <CardTitle className="flex items-start justify-between">
+                Fee Details
+                {!isLoading && data?.data && (
+                  <FeeStatusBadge status={data?.data?.status} />
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableBody>
+                  {!isLoading &&
+                    data?.data &&
+                    Object.entries(data.data).map(([key, value]) => {
+                      const f = fmts[key];
+                      const shouldRender = f !== undefined;
+                      return (
+                        shouldRender && (
+                          <TableRow key={key}>
+                            <TableCell className="font-medium">
+                              {f.label}
+                            </TableCell>
+                            <TableCell>{f.fmt(value)}</TableCell>
+                          </TableRow>
+                        )
+                      );
+                    })}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
+          <Card className="w-full max-w-screen-md h-fit ">
+            <CardHeader>Update Fee Details</CardHeader>
+            <CardContent>
+              <FeeForm hideCancel btnProps={{ className: "w-fit" }} />
+            </CardContent>
+          </Card>
+        </div>
         {!isLoading && (uri ? <StudenFeePdf file={uri} /> : <>No Pdf Found</>)}
       </div>
     </>

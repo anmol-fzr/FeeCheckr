@@ -22,4 +22,12 @@ const CrossButton = (props: SearchButtonProps) => {
   );
 };
 
-export { SearchButton, CrossButton };
+const CancelButton = (props: ButtonProps) => {
+  return (
+    <Button type="button" variant="outline" {...props}>
+      Cancel
+    </Button>
+  );
+};
+
+export { SearchButton, CrossButton, CancelButton };

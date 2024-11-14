@@ -3,6 +3,9 @@ import { useResizeObserver } from "@wojtekmaj/react-hooks";
 import { pdfjs, Document, Page } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
+import { Button } from "../ui";
+import { ExternalLink } from "lucide-react";
+import { Link } from "../custom";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -45,15 +48,20 @@ export function StudenFeePdf({ file }: StudenFeePdfProps) {
   return (
     <div
       ref={setContainerRef}
-      className="border max-w-screen-md w-full !aspect-[1.41] rounded-md p-2"
+      className="border max-w-screen-md w-full !aspect-[1.41] rounded-md p-2 space-y-2"
     >
+      <Link variant="outline" to={file} target="_blank">
+        <ExternalLink />
+        Open in New Tab
+      </Link>
+
       <Document
         className="w-full aspect-a4"
         file={file}
         onLoadSuccess={onDocumentLoadSuccess}
         options={options}
       >
-        {Array.from(new Array(numPages), (_el, index) => (
+        {Array.from(new Array(1), (_, index) => (
           <Page
             key={`page_${index + 1}`}
             pageNumber={index + 1}

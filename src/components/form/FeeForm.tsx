@@ -1,4 +1,10 @@
-import { Button, FormInput, FormSelect, FormTextarea } from "@/components";
+import {
+  Button,
+  ButtonProps,
+  FormInput,
+  FormSelect,
+  FormTextarea,
+} from "@/components";
 import {
   FieldValues,
   FormProvider,
@@ -70,7 +76,12 @@ const useUpdateDeleteForm = () => {
   return methods;
 };
 
-const FeeForm = () => {
+type FeeFormProps = {
+  hideCancel?: boolean;
+  btnProps?: ButtonProps;
+};
+
+const FeeForm = (props: FeeFormProps) => {
   const { onError, onSuccess } = useBaseFeeForm();
   const { dataId } = usePageParams();
   const methods = useUpdateDeleteForm();
@@ -86,23 +97,28 @@ const FeeForm = () => {
     mutate(data);
   };
 
-  return <BaseFeeForm {...{ methods, onSubmit, isPending }} />;
+  return <BaseFeeForm {...{ methods, onSubmit, isPending, ...props }} />;
 };
 
 type BaseFeeFormProps<T extends FieldValues> = {
   methods: UseFormReturn<T>;
   onSubmit: SubmitHandler<T>;
   isPending: boolean;
+  hideCancel?: boolean;
+  btnProps?: ButtonProps;
 };
 
 const BaseFeeForm = <T extends FieldValues>({
   methods,
   onSubmit,
+  hideCancel = false,
+  btnProps,
   isPending,
 }: BaseFeeFormProps<T>) => {
   const { handleSubmit } = methods;
-
   const { onOpenChange } = usePageContext();
+
+  console.log(hideCancel);
 
   const commonProps = {
     type: "submit",
@@ -126,15 +142,19 @@ const BaseFeeForm = <T extends FieldValues>({
         )}
         <div className="mt-4">
           <div className="flex gap-4">
-            <Button
-              {...commonProps}
-              type="button"
-              variant="outline"
-              onClick={onCancel}
-            >
-              Cancel
+            {!hideCancel && (
+              <Button
+                {...commonProps}
+                type="button"
+                variant="outline"
+                onClick={onCancel}
+              >
+                Cancel
+              </Button>
+            )}
+            <Button {...commonProps} {...btnProps}>
+              Update
             </Button>
-            <Button {...commonProps}>Update</Button>
           </div>
         </div>
       </form>
