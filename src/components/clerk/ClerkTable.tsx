@@ -5,6 +5,7 @@ import { API } from "@/service";
 import { IAdminCreatedBy, IClerk } from "@/types";
 import { Tipper } from "@/components";
 import {
+  getNextPageParam,
   TableActionsMenu,
   TableColCreatedAt,
   TableColumnHeader,
@@ -34,24 +35,14 @@ function ClerkTable() {
       },
       queryKey: ["CLERK"],
       queryFn: ({ pageParam }) => API.CLERK.GET(pageParam),
-      getNextPageParam: (lastPage, _, lastPageParam) => {
-        const hasNextPage =
-          Math.ceil(lastPage.paginate.total / lastPageParam.size) >
-          lastPageParam.page;
-
-        return hasNextPage
-          ? {
-              page: lastPageParam.page + 1,
-              size: lastPageParam.size,
-            }
-          : null;
-      },
+      getNextPageParam,
     });
 
   const flatData = React.useMemo(
     () => data?.pages?.flatMap((page) => page.data) ?? [],
     [data],
   );
+
   const columns: ColumnDef<IClerk>[] = React.useMemo(
     () => [
       {
@@ -133,7 +124,7 @@ function ClerkTable() {
   );
 
   const table = useReactTable({
-    data: isLoading ? [] : flatData,
+    data: [],
     columns,
     ...tableProps,
   });

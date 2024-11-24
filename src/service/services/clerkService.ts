@@ -9,7 +9,8 @@ type IReqGetClerk = IReqPagination & {
 };
 
 const CLERK = {
-  GET: (params: IReqGetClerk) => axiosInst.get<IResGetClerks>(uri, { params }),
+  GET: (params: IReqGetClerk | null) =>
+    axiosInst.get<IResGetClerks>(uri, { params }),
   ONE: (clerkId: string) => axiosInst.get<IResGetClerk>(`${uri}/${clerkId}`),
   CREATE: (data: IReqCreateClerk) =>
     axiosInst.post<IReqCreateClerk, IResGetClerk>(uri, data),
