@@ -1,8 +1,11 @@
 FROM oven/bun:1.1.33
 
-WORKDIR . /app
-COPY package*.json .
+WORKDIR /app
+COPY package*.json ./
 RUN bun i 
 COPY . .
-EXPOSE 5173
-CMD ["bun" , "run", "dev"]
+
+RUN apt-get -y update
+RUN apt-get -y install curl
+
+CMD ["bun", "run", "dev"]
