@@ -2,29 +2,29 @@ import { IRes } from "@/types";
 import { GetNextPageParamFunction } from "@tanstack/react-query";
 
 type IPaginateParams = {
-  page: number;
-  size: number;
+	page: number;
+	size: number;
 };
 
 const initialPageParam: IPaginateParams = {
-  page: 1,
-  size: 10,
+	page: 1,
+	size: 10,
 } as const;
 
 const getNextPageParam: GetNextPageParamFunction<
-  IPaginateParams,
-  IRes<any, true>
+	IPaginateParams,
+	IRes<any, true>
 > = (lastPage, _, lastPageParam) => {
-  const hasNextPage =
-    Math.ceil(lastPage?.paginate?.total / lastPageParam?.size) >
-    lastPageParam?.page;
+	const hasNextPage =
+		Math.ceil(lastPage?.paginate?.total / lastPageParam?.size) >
+		lastPageParam?.page;
 
-  return hasNextPage
-    ? {
-        page: lastPageParam?.page + 1,
-        size: lastPageParam?.size,
-      }
-    : null;
+	return hasNextPage
+		? {
+				page: lastPageParam?.page + 1,
+				size: lastPageParam?.size,
+			}
+		: null;
 };
 
 export * from "./TableColumnToggler";

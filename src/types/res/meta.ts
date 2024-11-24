@@ -1,13 +1,13 @@
 import { IRes } from ".";
 
 type Option = {
-  label: string;
-  helper?: string;
-  value: string;
+	label: string;
+	helper?: string;
+	value: string;
 };
 
 type IResGetMeta = IRes<{
-  depts: Option[];
+	depts: Option[];
 }>;
 
 export type { IResGetMeta };

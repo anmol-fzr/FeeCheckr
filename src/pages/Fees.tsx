@@ -4,17 +4,17 @@ import { usePageState } from "@/hooks";
 import { PageProvider } from "@/context";
 
 const FeesPage = () => {
-  const value = usePageState();
-  useSideBarRole();
+	const value = usePageState();
+	useSideBarRole();
 
-  return (
-    <PageProvider value={value}>
-      <Page title="Student's Fee" Header={() => <></>}>
-        <StudentFeeTable />
-      </Page>
-      <FeeSheet />
-    </PageProvider>
-  );
+	return (
+		<PageProvider value={value}>
+			<Page title="Student's Fee" Header={() => <></>}>
+				<StudentFeeTable />
+			</Page>
+			<FeeSheet />
+		</PageProvider>
+	);
 };
 
 export { FeesPage };

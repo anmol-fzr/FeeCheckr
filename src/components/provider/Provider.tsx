@@ -16,31 +16,31 @@ import { ErrorPage } from "@/pages";
 //const setDepts = useMetaStore.getState().setDepts;
 
 const Provider = ({ children }: OnlyChild) => {
-  //useEffect(() => {
-  //  API.META.GET()
-  //    .then((res) => {
-  //      setDepts(res.data.depts);
-  //    })
-  //    .catch((err) => {
-  //      console.log(err);
-  //    });
-  //}, []);
+	//useEffect(() => {
+	//  API.META.GET()
+	//    .then((res) => {
+	//      setDepts(res.data.depts);
+	//    })
+	//    .catch((err) => {
+	//      console.log(err);
+	//    });
+	//}, []);
 
-  return (
-    <BrowserRouter>
-      <ErrorBoundary FallbackComponent={ErrorPage} onError={console.log}>
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-            <Toaster />
-            <MantineProvider defaultColorScheme="auto">
-              {children}
-            </MantineProvider>
-            {envs.DEV && <ReactQueryDevtools initialIsOpen={false} />}
-          </ThemeProvider>
-        </QueryClientProvider>
-      </ErrorBoundary>
-    </BrowserRouter>
-  );
+	return (
+		<BrowserRouter>
+			<ErrorBoundary FallbackComponent={ErrorPage} onError={console.log}>
+				<QueryClientProvider client={queryClient}>
+					<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+						<Toaster />
+						<MantineProvider defaultColorScheme="auto">
+							{children}
+						</MantineProvider>
+						{envs.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+					</ThemeProvider>
+				</QueryClientProvider>
+			</ErrorBoundary>
+		</BrowserRouter>
+	);
 };
 
 export { Provider };

@@ -1,22 +1,22 @@
 import { AxiosError } from "axios";
 
 type IPaginated = {
-  limit: number;
-  page: number;
-  skip: number;
-  total: number;
+	limit: number;
+	page: number;
+	skip: number;
+	total: number;
 };
 
 interface IRes<Data, isPaginated extends boolean = false> {
-  data: Data;
-  message: string;
-  success: boolean;
-  paginate: isPaginated extends true ? IPaginated : null;
+	data: Data;
+	message: string;
+	success: boolean;
+	paginate: isPaginated extends true ? IPaginated : null;
 }
 
 type ITimeStamps = {
-  createdAt: string;
-  updatedAt: string;
+	createdAt: string;
+	updatedAt: string;
 };
 
 type ServerError = AxiosError<IRes<never>>;

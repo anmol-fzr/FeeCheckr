@@ -14,56 +14,56 @@ import { useAuthStore } from "@/store";
 type LoginForm = InferType<typeof updateAccountSchema>;
 
 export function UpdateAccountForm() {
-  const email = useAuthStore((state) => state.creds.email);
-  const id = useId();
-  const navigate = useNavigate();
+	const email = useAuthStore((state) => state.creds.email);
+	const id = useId();
+	const navigate = useNavigate();
 
-  const methods = useForm({
-    resolver: yupResolver(updateAccountSchema),
-    defaultValues: {
-      email,
-    },
-  });
+	const methods = useForm({
+		resolver: yupResolver(updateAccountSchema),
+		defaultValues: {
+			email,
+		},
+	});
 
-  const { handleSubmit } = methods;
+	const { handleSubmit } = methods;
 
-  const { mutate } = useMutation({
-    mutationFn: API.AUTH.UPDATE,
-    onSuccess(res) {
-      methods.reset();
-      toast.success(res.message, { id });
-    },
-    onError(err) {
-      toast.error(err.message, { id });
-    },
-  });
+	const { mutate } = useMutation({
+		mutationFn: API.AUTH.UPDATE,
+		onSuccess(res) {
+			methods.reset();
+			toast.success(res.message, { id });
+		},
+		onError(err) {
+			toast.error(err.message, { id });
+		},
+	});
 
-  const onSubmit = (data: LoginForm) => {
-    toast.loading("Updating ...", { id });
-    mutate(data);
-  };
+	const onSubmit = (data: LoginForm) => {
+		toast.loading("Updating ...", { id });
+		mutate(data);
+	};
 
-  return (
-    <FormProvider {...methods}>
-      <form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
-        <FormInput
-          label="Email"
-          type="email"
-          name="email"
-          disabled
-          info="Email Updates are not disabled"
-          placeholder="m@example.com"
-        />
-        <FormInput
-          label="Password"
-          name="password"
-          placeholder="New Password"
-          info="This will Update you password"
-        />
-        <Button type="submit" className="w-fit">
-          Update
-        </Button>
-      </form>
-    </FormProvider>
-  );
+	return (
+		<FormProvider {...methods}>
+			<form className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
+				<FormInput
+					label="Email"
+					type="email"
+					name="email"
+					disabled
+					info="Email Updates are not disabled"
+					placeholder="m@example.com"
+				/>
+				<FormInput
+					label="Password"
+					name="password"
+					placeholder="New Password"
+					info="This will Update you password"
+				/>
+				<Button type="submit" className="w-fit">
+					Update
+				</Button>
+			</form>
+		</FormProvider>
+	);
 }

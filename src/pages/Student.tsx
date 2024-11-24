@@ -4,16 +4,16 @@ import { usePageState } from "@/hooks";
 import { PageProvider } from "@/context";
 
 const Student = () => {
-  const value = usePageState();
-  useSideBarRole();
+	const value = usePageState();
+	useSideBarRole();
 
-  return (
-    <PageProvider value={value}>
-      <Page title="Students" Header={() => <></>}>
-        <StudentTable />
-      </Page>
-    </PageProvider>
-  );
+	return (
+		<PageProvider value={value}>
+			<Page title="Students" Header={() => <></>}>
+				<StudentTable />
+			</Page>
+		</PageProvider>
+	);
 };
 
 export { Student };

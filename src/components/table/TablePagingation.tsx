@@ -6,35 +6,35 @@ import { DefinedUseInfiniteQueryResult } from "@tanstack/react-query";
 //}
 
 type TablePaginationProps<TData, TError> = Pick<
-  DefinedUseInfiniteQueryResult<TData, TError>,
-  "fetchNextPage"
+	DefinedUseInfiniteQueryResult<TData, TError>,
+	"fetchNextPage"
 >;
 
 const TablePagination = <TData, TError>({
-  fetchNextPage,
+	fetchNextPage,
 }: TablePaginationProps<TData, TError>) => {
-  return (
-    <div className="flex items-center justify-end space-x-2 py-4">
-      <div className="space-x-2">
-        <Button
-          variant="outline"
-          size="sm"
-          //onClick={() => table.previousPage()}
-          //disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={fetchNextPage}
-          //disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
-      </div>
-    </div>
-  );
+	return (
+		<div className="flex items-center justify-end space-x-2 py-4">
+			<div className="space-x-2">
+				<Button
+					variant="outline"
+					size="sm"
+					//onClick={() => table.previousPage()}
+					//disabled={!table.getCanPreviousPage()}
+				>
+					Previous
+				</Button>
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={fetchNextPage}
+					//disabled={!table.getCanNextPage()}
+				>
+					Next
+				</Button>
+			</div>
+		</div>
+	);
 };
 
 export { TablePagination };

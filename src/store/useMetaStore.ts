@@ -5,19 +5,19 @@ import { registerStore } from "@/utils";
 import { Option } from "@/types";
 
 type IMetaStore = {
-  depts: Option[];
-  setDepts: (depts: IMetaStore["depts"]) => void;
+	depts: Option[];
+	setDepts: (depts: IMetaStore["depts"]) => void;
 };
 
 const useMetaStore = create<IMetaStore>()(
-  persist(
-    (set) => ({
-      depts: [],
+	persist(
+		(set) => ({
+			depts: [],
 
-      setDepts: (newDepts) => set({ depts: newDepts }),
-    }),
-    { name: "useAuthStore", storage: zusLocalStorage },
-  ),
+			setDepts: (newDepts) => set({ depts: newDepts }),
+		}),
+		{ name: "useAuthStore", storage: zusLocalStorage },
+	),
 );
 
 registerStore(useMetaStore, useMetaStore.persist.getOptions().name as string);

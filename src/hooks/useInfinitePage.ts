@@ -8,45 +8,45 @@ import { DefinedUseInfiniteQueryResult } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 type PropsFromTQuery = Pick<
-  DefinedUseInfiniteQueryResult,
-  "fetchNextPage" | "isFetchingNextPage" | "hasNextPage"
+	DefinedUseInfiniteQueryResult,
+	"fetchNextPage" | "isFetchingNextPage" | "hasNextPage"
 >;
 
 type Props<Data> = PropsFromTQuery & {
-  rowVirtualizer: Virtualizer<any, any>;
-  allRows: Data[];
+	rowVirtualizer: Virtualizer<any, any>;
+	allRows: Data[];
 };
 
 const useInfinitePage = <Data>(props: Props<Data>) => {
-  const {
-    rowVirtualizer,
-    allRows,
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-  } = props;
+	const {
+		rowVirtualizer,
+		allRows,
+		hasNextPage,
+		isFetchingNextPage,
+		fetchNextPage,
+	} = props;
 
-  useEffect(() => {
-    const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
+	useEffect(() => {
+		const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
 
-    if (!lastItem) {
-      return;
-    }
+		if (!lastItem) {
+			return;
+		}
 
-    if (
-      lastItem.index >= allRows.length - 1 &&
-      hasNextPage &&
-      !isFetchingNextPage
-    ) {
-      fetchNextPage();
-    }
-  }, [
-    hasNextPage,
-    fetchNextPage,
-    allRows.length,
-    isFetchingNextPage,
-    rowVirtualizer.getVirtualItems(),
-  ]);
+		if (
+			lastItem.index >= allRows.length - 1 &&
+			hasNextPage &&
+			!isFetchingNextPage
+		) {
+			fetchNextPage();
+		}
+	}, [
+		hasNextPage,
+		fetchNextPage,
+		allRows.length,
+		isFetchingNextPage,
+		rowVirtualizer.getVirtualItems(),
+	]);
 };
 
 export { useInfinitePage };

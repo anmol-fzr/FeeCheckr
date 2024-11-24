@@ -6,33 +6,33 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Navbar } from "@/components";
 
 const Layout = () => {
-  const isLogin = useAuthStore((state) => state.creds.isLogin);
-  const navigate = useNavigate();
+	const isLogin = useAuthStore((state) => state.creds.isLogin);
+	const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!isLogin) {
-      return navigate("/auth/login");
-    }
-  }, [isLogin]);
+	useEffect(() => {
+		if (!isLogin) {
+			return navigate("/auth/login");
+		}
+	}, [isLogin]);
 
-  const mql = window.matchMedia(`(min-width: 1920px)`).matches;
+	const mql = window.matchMedia(`(min-width: 1920px)`).matches;
 
-  let open;
-  if (mql) {
-    open = true;
-  }
+	let open;
+	if (mql) {
+		open = true;
+	}
 
-  return (
-    <SidebarProvider>
-      <AppSidebar variant="floating" defaultChecked={open} />
-      <SidebarInset>
-        <Navbar />
-        <div className="flex flex-1 flex-col gap-4 p-3">
-          <Outlet />
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
-  );
+	return (
+		<SidebarProvider>
+			<AppSidebar variant="floating" defaultChecked={open} />
+			<SidebarInset>
+				<Navbar />
+				<div className="flex flex-1 flex-col gap-4 p-3">
+					<Outlet />
+				</div>
+			</SidebarInset>
+		</SidebarProvider>
+	);
 };
 
 export { Layout };

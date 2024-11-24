@@ -4,16 +4,16 @@ import { type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 export interface LinkProps
-  extends RawLinkProps,
-    VariantProps<typeof buttonVariants> {
-  className?: string;
+	extends RawLinkProps,
+		VariantProps<typeof buttonVariants> {
+	className?: string;
 }
 
 const Link = ({ variant = "link", size, className, ...props }: LinkProps) => (
-  <RawLink
-    className={cn(buttonVariants({ variant, size, className }))}
-    {...props}
-  />
+	<RawLink
+		className={cn(buttonVariants({ variant, size, className }))}
+		{...props}
+	/>
 );
 
 export { Link };

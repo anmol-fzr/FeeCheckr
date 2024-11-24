@@ -1,8 +1,8 @@
 import type { ParsedUrlQueryInput } from "querystring";
 
 type IReqPagination = {
-  size?: number;
-  page?: number;
+	size?: number;
+	page?: number;
 };
 
 type IReqParams = ParsedUrlQueryInput;

@@ -5,28 +5,28 @@ import { usePageContext, usePageState } from "@/hooks";
 import { Plus } from "lucide-react";
 
 const Hod = () => {
-  const value = usePageState();
+	const value = usePageState();
 
-  useSideBarRole();
-  return (
-    <PageProvider value={value}>
-      <Page title="Head Of Departments" Header={HodHeader}>
-        <HodTable />
-      </Page>
-      <AddHodSheet />
-    </PageProvider>
-  );
+	useSideBarRole();
+	return (
+		<PageProvider value={value}>
+			<Page title="Head Of Departments" Header={HodHeader}>
+				<HodTable />
+			</Page>
+			<AddHodSheet />
+		</PageProvider>
+	);
 };
 
 const HodHeader = () => {
-  const { handleNew } = usePageContext();
+	const { handleNew } = usePageContext();
 
-  return (
-    <Button onClick={handleNew} type="button">
-      <Plus />
-      Add New HOD
-    </Button>
-  );
+	return (
+		<Button onClick={handleNew} type="button">
+			<Plus />
+			Add New HOD
+		</Button>
+	);
 };
 
 export { Hod };

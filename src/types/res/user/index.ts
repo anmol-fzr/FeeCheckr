@@ -1,33 +1,33 @@
 type User = {
-  id: number
-  name: string
-  username: string
-  email: string
-  address: Address
-  phone: string
-  website: string
-  company: Company
-}
+	id: number;
+	name: string;
+	username: string;
+	email: string;
+	address: Address;
+	phone: string;
+	website: string;
+	company: Company;
+};
 
 type Address = {
-  street: string
-  suite: string
-  city: string
-  zipcode: string
-  geo: Geo
-}
+	street: string;
+	suite: string;
+	city: string;
+	zipcode: string;
+	geo: Geo;
+};
 
 type Geo = {
-  lat: string
-  lng: string
-}
+	lat: string;
+	lng: string;
+};
 
 type Company = {
-  name: string
-  catchPhrase: string
-  bs: string
-}
+	name: string;
+	catchPhrase: string;
+	bs: string;
+};
 
-type IResUsers = User[]
+type IResUsers = User[];
 
-export type { IResUsers }
+export type { IResUsers };

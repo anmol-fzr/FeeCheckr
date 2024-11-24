@@ -1,6 +1,6 @@
 type IReqLogin = {
-  email: string;
-  password: string;
+	email: string;
+	password: string;
 };
 
 type IReqUpdateAccount = Pick<IReqLogin, "password">;
