@@ -2,7 +2,7 @@ import { useMemo, useRef } from "react";
 import { ColumnDef, useReactTable } from "@tanstack/react-table";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { API } from "@/service";
-import { IAdminCreatedBy, IDept } from "@/types";
+import { IAdminCreatedBy, IAdmin } from "@/types";
 import { Tipper } from "@/components";
 import {
 	TableActionsMenu,
@@ -36,7 +36,7 @@ function HodTable() {
 
 	const { handleEdit, handleDelete } = usePageContext();
 
-	const columns: ColumnDef<IDept>[] = useMemo(
+	const columns: ColumnDef<IAdmin>[] = useMemo(
 		() => [
 			{
 				accessorKey: "_id",
@@ -61,12 +61,6 @@ function HodTable() {
 					<TableColumnHeader column={column} title="Mobile Number" />
 				),
 			},
-			//{
-			//  accessorKey: "dept.name",
-			//  header: ({ column }) => (
-			//    <TableColumnHeader column={column} title="Department" />
-			//  ),
-			//},
 			{
 				accessorKey: "createdBy",
 				header: ({ column }) => (

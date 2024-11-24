@@ -1,4 +1,4 @@
-import { Button, FormInput, FormSelect } from "@/components";
+import { Button, FormInput } from "@/components";
 import {
 	FieldValues,
 	FormProvider,
@@ -6,7 +6,6 @@ import {
 	useForm,
 	UseFormReturn,
 } from "react-hook-form";
-import { useMetaStore } from "@/store";
 import { newHodSchema, updateHodSchema } from "@/schema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
@@ -175,8 +174,6 @@ const BaseHodForm = <T extends FieldValues>({
 	onSubmit,
 	isPending,
 }: BaseHodFormProps<T>) => {
-	const deptOpts = useMetaStore((state) => state.depts);
-
 	const { isDeleting, isUpdating, isCreating } = usePageParams();
 
 	const { handleSubmit } = methods;
@@ -198,7 +195,6 @@ const BaseHodForm = <T extends FieldValues>({
 				<FormInput name="mobile" label="Mobile" type="number" />
 				<FormInput name="email" label="Email Address" type="email" />
 				<FormInput name="password" label="Password" type="text" />
-				<FormSelect name="deptId" options={deptOpts} label="Department" />
 				<div className="mt-4">
 					<div className="flex gap-4">
 						<Button

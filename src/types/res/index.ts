@@ -28,6 +28,5 @@ export * from "./auth";
 export * from "./clerk";
 export * from "./user";
 export * from "./meta";
-export * from "./dept";
 export * from "./students";
 export * from "./fees";

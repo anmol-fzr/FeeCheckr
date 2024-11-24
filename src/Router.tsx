@@ -6,7 +6,6 @@ import {
 	SuperAdmin,
 	FeesPage,
 	Hod,
-	AddDeptPage,
 	UiSettings,
 	AccountSettings,
 	Student,
@@ -31,7 +30,6 @@ const Router = () => {
 				<Route path="hod" element={<Hod />} />
 				<Route path="fees" element={<FeesPage />} />
 				<Route path="fees/:feeId" element={<FeeOnlyPage />} />
-				<Route path="dept/add" element={<AddDeptPage />} />
 				<Route path="settings" element={<SettingsLayout />}>
 					<Route path="ui" element={<UiSettings />} />
 					<Route path="account" element={<AccountSettings />} />

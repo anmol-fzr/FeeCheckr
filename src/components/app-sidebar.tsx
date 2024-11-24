@@ -10,8 +10,6 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
-	SidebarMenuSub,
-	SidebarMenuSubButton,
 	SidebarRail,
 } from "@/components/ui/sidebar";
 import { NavLink } from "react-router-dom";
@@ -24,18 +22,6 @@ const navMain = [
 		url: "/",
 		allowedRoles: ["superadmin", "hod", "clerk"],
 	},
-	//{
-	//  title: "Departments",
-	//  url: "/dept",
-	//  allowedRoles: ["superadmin"],
-	//  //items: [
-	//  //  {
-	//  //    title: "Add Department",
-	//  //    url: "/dept/add",
-	//  //    allowedRoles: ["superadmin"],
-	//  //  },
-	//  //],
-	//},
 	{
 		title: "Super Admin",
 		url: "/superadmin",

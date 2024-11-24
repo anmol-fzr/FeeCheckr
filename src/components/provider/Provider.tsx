@@ -9,23 +9,8 @@ import { envs } from "@/utils";
 import { queryClient } from "@/config";
 import type { OnlyChild } from "@/types";
 import { ErrorPage } from "@/pages";
-//import { API } from "@/service";
-//import { useEffect } from "react";
-//import { useMetaStore } from "@/store";
-
-//const setDepts = useMetaStore.getState().setDepts;
 
 const Provider = ({ children }: OnlyChild) => {
-	//useEffect(() => {
-	//  API.META.GET()
-	//    .then((res) => {
-	//      setDepts(res.data.depts);
-	//    })
-	//    .catch((err) => {
-	//      console.log(err);
-	//    });
-	//}, []);
-
 	return (
 		<BrowserRouter>
 			<ErrorBoundary FallbackComponent={ErrorPage} onError={console.log}>
@@ -35,7 +20,7 @@ const Provider = ({ children }: OnlyChild) => {
 						<MantineProvider defaultColorScheme="auto">
 							{children}
 						</MantineProvider>
-						{envs.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+						{envs.isDev && <ReactQueryDevtools initialIsOpen={false} />}
 					</ThemeProvider>
 				</QueryClientProvider>
 			</ErrorBoundary>

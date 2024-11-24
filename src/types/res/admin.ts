@@ -1,11 +1,5 @@
 import { IRes, ITimeStamps } from ".";
 
-type IDept = ITimeStamps & {
-	_id: string;
-	name: string;
-	createdBy: IAdminCreatedBy;
-};
-
 type IAdmin = ITimeStamps & {
 	_id: string;
 	name: string;
@@ -13,7 +7,6 @@ type IAdmin = ITimeStamps & {
 	email: string;
 	role: string;
 	createdBy: IAdminCreatedBy;
-	dept: IDept;
 };
 
 type IAdminCreatedBy = ITimeStamps & {
@@ -29,4 +22,4 @@ type IResGetAdmins = IRes<IAdmin[], true>;
 type IResGetAdmin = IRes<IAdmin>;
 
 export type { IResGetAdmins, IResGetAdmin };
-export type { IAdmin, IDept, IAdminCreatedBy };
+export type { IAdmin, IAdminCreatedBy };
