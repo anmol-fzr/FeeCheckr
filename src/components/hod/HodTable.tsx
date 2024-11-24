@@ -113,7 +113,7 @@ function HodTable() {
 				},
 			},
 		],
-		[],
+		[handleEdit, handleDelete],
 	);
 
 	const allRows = useMemo(
