@@ -1,11 +1,10 @@
-import * as React from "react";
+import { useMemo, useRef } from "react";
 import { ColumnDef, useReactTable } from "@tanstack/react-table";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { API } from "@/service";
-import { IAdminCreatedBy, IClerk } from "@/types";
+import { IAdmin, IAdminCreatedBy, IClerk } from "@/types";
 import { Tipper } from "@/components";
 import {
-	getNextPageParam,
 	TableActionsMenu,
 	TableColCreatedAt,
 	TableColumnHeader,
@@ -15,35 +14,37 @@ import {
 } from "@/components/table";
 import {
 	useGetTableProps,
+	useInfinitePage,
 	usePageContext,
 	useReactTableVirtualizer,
 } from "@/hooks";
 import { ReactTable } from "../table/ReactTable";
+import { initialPageParam, getNextPageParam } from "@/components/table";
 
 function ClerkTable() {
 	const tableProps = useGetTableProps();
 
-	const tableRef = React.useRef<HTMLDivElement>(null);
+	const tableRef = useRef<HTMLDivElement>(null);
 
 	const { handleEdit, handleDelete } = usePageContext();
 
 	const { isLoading, data, fetchNextPage, hasNextPage, isFetchingNextPage } =
 		useInfiniteQuery({
 			initialPageParam: {
-				page: 1,
 				size: 10,
+				page: 1,
 			},
 			queryKey: ["CLERK"],
 			queryFn: ({ pageParam }) => API.CLERK.GET(pageParam),
 			getNextPageParam,
 		});
 
-	const flatData = React.useMemo(
+	const allRows = useMemo(
 		() => data?.pages?.flatMap((page) => page.data) ?? [],
 		[data],
 	);
 
-	const columns: ColumnDef<IClerk>[] = React.useMemo(
+	const columns: ColumnDef<IClerk>[] = useMemo(
 		() => [
 			{
 				accessorKey: "_id",
@@ -80,7 +81,7 @@ function ClerkTable() {
 					return (
 						<div className="font-medium">
 							<Tipper
-								tooltip={`This Department is created By ${isMe ? "You" : name}`}
+								tooltip={`This Clerk is created By ${isMe ? "You" : name}`}
 							>
 								{isMe ? (
 									<p>
@@ -113,7 +114,8 @@ function ClerkTable() {
 				id: "actions",
 				header: "Actions",
 				cell: ({ row }) => {
-					const _id = row.getValue("_id");
+					const _id = row.original._id;
+
 					const onEdit = () => handleEdit(_id);
 					const onDelete = () => handleDelete(_id);
 					return <TableActionsMenu {...{ onEdit, onDelete }} />;
@@ -124,8 +126,8 @@ function ClerkTable() {
 	);
 
 	const table = useReactTable({
-		data: [],
-		columns,
+		data: allRows,
+		columns: columns as ColumnDef<IAdmin>[],
 		...tableProps,
 	});
 
@@ -134,27 +136,13 @@ function ClerkTable() {
 		tableRef,
 	});
 
-	React.useEffect(() => {
-		const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
-
-		if (!lastItem) {
-			return;
-		}
-
-		if (
-			lastItem.index >= flatData.length - 1 &&
-			hasNextPage &&
-			!isFetchingNextPage
-		) {
-			fetchNextPage();
-		}
-	}, [
+	useInfinitePage({
+		rowVirtualizer,
+		allRows,
 		hasNextPage,
-		fetchNextPage,
-		flatData.length,
 		isFetchingNextPage,
-		rowVirtualizer.getVirtualItems(),
-	]);
+		fetchNextPage,
+	});
 
 	return (
 		<div className="w-full">

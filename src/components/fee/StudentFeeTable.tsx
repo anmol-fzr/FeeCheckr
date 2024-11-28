@@ -1,8 +1,8 @@
-import * as React from "react";
-import { ColumnDef, useReactTable } from "@tanstack/react-table";
+import { useState, useRef, useMemo, useCallback } from "react";
+import { type ColumnDef, useReactTable } from "@tanstack/react-table";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { API } from "@/service";
-import { IResGetFees } from "@/types";
+import { IFeeWStudent } from "@/types";
 import { batchToClgYear, formatCurrency } from "@/utils";
 import {
 	getNextPageParam,
@@ -33,8 +33,6 @@ import { useFilters } from "@/hooks/useFilters";
 import { useNavigate } from "react-router-dom";
 import { feeStatuses, feeStatusOptions, feeTypes, sems } from "@/utils/options";
 
-type IFee = IResGetFees["data"][0];
-
 const initialFilters = {
 	batch: [],
 	status: feeStatuses,
@@ -63,18 +61,18 @@ const filterFields = [
 		options: feeType,
 		name: "feeType",
 	},
-];
+] as const;
 
 function StudentFeeTable() {
 	const tableProps = useGetTableProps();
 	const { filters, getFilters, resetFilters } = useFilters(initialFilters);
 	const navigate = useNavigate();
 
-	const [filterParams, setFilterParams] = React.useState<
+	const [filterParams, setFilterParams] = useState<
 		Record<string, string | string[]>
 	>({});
 
-	const tableRef = React.useRef<HTMLDivElement>(null);
+	const tableRef = useRef<HTMLDivElement>(null);
 
 	const { handleEdit } = usePageContext();
 
@@ -87,8 +85,8 @@ function StudentFeeTable() {
 			getNextPageParam,
 		});
 
-	const columns: ColumnDef<IFee>[] = React.useMemo(
-		() => [
+	const columns = useMemo(() => {
+		const cols: ColumnDef<IFeeWStudent>[] = [
 			{
 				accessorKey: "_id",
 				header: "Fee Id",
@@ -184,21 +182,21 @@ function StudentFeeTable() {
 					return <TableActionsMenu {...{ onView, onEdit }} />;
 				},
 			},
-		],
-		[handleEdit, navigate],
-	);
+		];
+		return cols;
+	}, [handleEdit, navigate]);
 
-	const allRows = React.useMemo(
+	const allRows = useMemo(
 		() => (data ? data.pages.flatMap((d) => d.data) : []),
 		[data],
 	);
 
-	const table = useReactTable({
+	const table = useReactTable<IFeeWStudent>({
 		data: allRows,
 		columns,
-		meta: {
-			onRowDoubleClick: (row: IFee) => navigate(row._id),
-		},
+		//meta: {
+		//	onRowDoubleClick: (row: IFeeWStudent) => navigate(row._id),
+		//},
 		...tableProps,
 	});
 
@@ -215,30 +213,35 @@ function StudentFeeTable() {
 		fetchNextPage,
 	});
 
-	const onSearch = React.useCallback(
+	const form = useForm({});
+
+	const onSearch = useCallback(
 		debounce(() => {
 			const newFilterParams = getFilters();
 
+			const inputs = form.getValues();
+
 			setFilterParams({
-				//...values,
+				...inputs,
 				...newFilterParams,
 			});
 		}, 100),
 		[],
 	);
 
-	const form = useForm({});
-
-	const onReset = React.useCallback(() => {
+	const onReset = useCallback(() => {
 		setFilterParams({});
 		resetFilters();
-	}, []);
+	}, [resetFilters]);
 
 	return (
 		<div className="w-full">
 			<div className="flex flex-col py-4">
 				<SearchForm
 					{...form}
+					formProps={{
+						onSubmit: form.handleSubmit(onSearch),
+					}}
 					onSearch={onSearch}
 					onReset={onReset}
 					fields={searchFields}

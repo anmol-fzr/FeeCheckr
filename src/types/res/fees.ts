@@ -3,7 +3,7 @@ import { IRes, ITimeStamps } from ".";
 
 type IResGetFee = IRes<IFee & { pdfUri: string }>;
 
-interface Root extends ITimeStamps {
+interface IFeeWStudent extends ITimeStamps {
 	_id: string;
 	studentId: string;
 	sbCollRef: string;
@@ -27,6 +27,6 @@ interface Root extends ITimeStamps {
 	};
 }
 
-type IResGetFees = IRes<Root[], true>;
+type IResGetFees = IRes<IFeeWStudent[], true>;
 
-export type { IResGetFee, IResGetFees };
+export type { IResGetFee, IResGetFees, IFeeWStudent };

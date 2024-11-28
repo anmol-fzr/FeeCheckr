@@ -1,9 +1,9 @@
 import { useSideBarRole } from "@/hooks/useSideBarRole";
 import { AddClerkSheet, ClerkTable, Page, AddButton } from "@/components";
-import { usePageContext, usePageState } from "@/hooks";
 import { PageProvider } from "@/context";
+import { usePageContext, usePageState } from "@/hooks";
 
-const Clerk = () => {
+export function Clerk() {
 	const value = usePageState();
 	useSideBarRole();
 
@@ -15,12 +15,10 @@ const Clerk = () => {
 			<AddClerkSheet />
 		</PageProvider>
 	);
-};
+}
 
-const ClerkHeader = () => {
+function ClerkHeader() {
 	const { handleNew } = usePageContext();
 
 	return <AddButton onClick={handleNew}>Add New Clerk</AddButton>;
-};
-
-export { Clerk };
+}

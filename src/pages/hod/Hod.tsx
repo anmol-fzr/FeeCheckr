@@ -3,7 +3,7 @@ import { AddHodSheet, HodTable, Page, AddButton } from "@/components";
 import { PageProvider } from "@/context";
 import { usePageContext, usePageState } from "@/hooks";
 
-const Hod = () => {
+export function Hod() {
 	const value = usePageState();
 	useSideBarRole();
 
@@ -15,12 +15,10 @@ const Hod = () => {
 			<AddHodSheet />
 		</PageProvider>
 	);
-};
+}
 
-const HodHeader = () => {
+function HodHeader() {
 	const { handleNew } = usePageContext();
 
 	return <AddButton onClick={handleNew}>Add New HOD</AddButton>;
-};
-
-export { Hod };
+}

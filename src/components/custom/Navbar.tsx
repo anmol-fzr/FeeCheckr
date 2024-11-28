@@ -20,6 +20,9 @@ import { ModeToggle } from "../mode-toggle";
 
 const Navbar = () => {
 	const role = useAuthStore((state) => state.creds.role)?.toUpperCase();
+	const name = useAuthStore((state) => state.creds.name)
+		?.toUpperCase()
+		.slice(0, 2);
 	const navigate = useNavigate();
 
 	const toSettings = () => navigate("/settings/ui");
@@ -39,8 +42,7 @@ const Navbar = () => {
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Avatar className="cursor-pointer">
-							<AvatarImage src="https://avatars.githubusercontent.com/u/88301047?v=4" />
-							<AvatarFallback>CN</AvatarFallback>
+							<AvatarFallback>{name}</AvatarFallback>
 						</Avatar>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end" className="flex flex-col gap-1 w-56">

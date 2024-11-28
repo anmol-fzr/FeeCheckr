@@ -5,18 +5,25 @@ import { Loader2 } from "lucide-react";
 import { Virtualizer } from "@tanstack/react-virtual";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
-interface FullTableBodyProps<TData> {
-	table: Table<TData>;
-	isLoading: boolean;
-	rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
-}
-
 declare module "@tanstack/react-table" {
 	// @ts-ignore
 	interface TableMeta<TData extends RowData> {
 		onRowDoubleClick: (d: TData) => void;
 	}
 }
+
+interface FullTableBodyProps<TData> {
+	table: Table<TData>;
+	isLoading: boolean;
+	rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
+}
+
+//declare module "@tanstack/react-table" {
+//	// @ts-ignore
+//	interface TableMeta<TData extends RowData> {
+//		onRowDoubleClick: (d: TData) => void;
+//	}
+//}
 
 const FullTableBody = <T,>({
 	table,

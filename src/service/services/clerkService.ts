@@ -4,12 +4,13 @@ import { IReqPagination, IReqCreateClerk, IReqUpdateClerk } from "@/types";
 
 const uri = "/clerk";
 
-type IReqGetClerk = IReqPagination & {
-	clerkId?: string;
-};
+type IReqGetClerk = IReqPagination;
+//& {
+//	clerkId?: string;
+//};
 
 const CLERK = {
-	GET: (params: IReqGetClerk | null) =>
+	GET: (params?: IReqGetClerk | null | undefined) =>
 		axiosInst.get<IResGetClerks>(uri, { params }),
 	ONE: (clerkId: string) => axiosInst.get<IResGetClerk>(`${uri}/${clerkId}`),
 	CREATE: (data: IReqCreateClerk) =>

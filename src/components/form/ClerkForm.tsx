@@ -195,14 +195,24 @@ const BaseClerkForm = <T extends FieldValues>({
 	return (
 		<FormProvider {...methods}>
 			<form className="flex flex-col gap-2" onSubmit={handleSubmit(onSubmit)}>
-				<FormInput name="name" label="Name" />
-				<FormInput name="mobile" label="Mobile" type="number" />
-				<FormInput name="email" label="Email Address" type="email" />
+				<FormInput name="name" label="Name" placeholder="Rahul" />
+				<FormInput
+					name="mobile"
+					label="Mobile"
+					type="number"
+					placeholder="8426723456"
+				/>
+				<FormInput
+					name="email"
+					label="Email Address"
+					type="email"
+					placeholder="rahul@email.in"
+				/>
 				<FormInput
 					name="password"
 					label="Password"
 					type="text"
-					placeholder="New Password"
+					placeholder="*** ***"
 				/>
 				<div className="mt-4">
 					<div className="flex gap-4">

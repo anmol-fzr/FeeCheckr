@@ -1,11 +1,11 @@
 import { Sheet, SheetContent, SheetHeader } from "@/components/ui/sheet";
-import { ClerkForm } from "@/components";
-import { usePageContext } from "@/hooks";
-import { Separator } from "../ui/separator";
 import { ActionStatusDesc } from "./ActionStatusDesc";
 import { ActionStatusTitle } from "./ActionStatusTitle";
+import { ClerkForm } from "@/components";
+import { Separator } from "../ui/separator";
+import { usePageContext } from "@/hooks";
 
-const AddClerkSheet = () => {
+export function AddClerkSheet() {
 	const { isOpen, onOpenChange } = usePageContext();
 
 	return (
@@ -20,5 +20,4 @@ const AddClerkSheet = () => {
 			</SheetContent>
 		</Sheet>
 	);
-};
-export { AddClerkSheet };
+}

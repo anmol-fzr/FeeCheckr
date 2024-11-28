@@ -5,10 +5,7 @@ import { FormInput } from "../ui";
 import type { FormInputProps } from "../ui";
 
 type SearchFormProps<TFieldValues extends FieldValues, TContext = any> = {
-	formProps?: Omit<
-		React.ComponentPropsWithoutRef<"form">,
-		"onSubmit" | "children"
-	>;
+	formProps?: Omit<React.ComponentPropsWithoutRef<"form">, "children">;
 	onSearch: () => void;
 	onReset: () => void;
 	fields: FormInputProps[];
@@ -31,7 +28,7 @@ const SearchForm = <TFieldValues extends FieldValues, TContext = any>(
 								{...props}
 							/>
 						))}
-						<SearchButton onClick={onSearch} />
+						<SearchButton onClick={onSearch} type="submit" />
 						<CrossButton onClick={onReset} />
 					</form>
 				</FormProvider>
