@@ -19,7 +19,7 @@ import {
 	StatusBadge,
 } from "@/components";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { BadgeProps } from "@mantine/core";
+import type { BadgeProps } from "@/components/ui/badge";
 
 interface DataTableFacetedFilterProps {
 	title?: string;

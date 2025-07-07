@@ -58,11 +58,11 @@ const navMain = [
 function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const currRole = useAuthStore((state) => state.creds.role);
 	return (
-		<Sidebar {...props}>
+		<Sidebar collapsible="offcanvas" {...props}>
 			<SidebarHeader>
 				<SidebarMenu>
 					<SidebarMenuItem>
-						<SidebarMenuButton size="lg" asChild>
+						<SidebarMenuButton size="default" asChild className="!py-[19px]">
 							<a href="#">
 								<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
 									<GalleryVerticalEnd className="size-4" />
