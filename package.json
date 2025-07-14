@@ -12,6 +12,8 @@
 		"preview": "vite preview --host --port 5173"
 	},
 	"dependencies": {
+		"@firebase/app": "^0.13.2",
+		"@firebase/database": "^1.0.20",
 		"@formkit/auto-animate": "^0.8.2",
 		"@hookform/resolvers": "^3.6.0",
 		"@iconify/react": "^5.0.2",

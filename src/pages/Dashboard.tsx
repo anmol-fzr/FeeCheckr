@@ -1,5 +1,4 @@
-import { Chart } from "@/components/dashboard/Chart";
-import { ref, onValue } from "firebase/database";
+import { ref, onValue } from "@firebase/database";
 import { useEffect, useState } from "react";
 import { fbRealTimeDB } from "@/config";
 import { Alert, AlertTitle, AlertDescription } from "@/components";
@@ -11,7 +10,7 @@ const Users = () => {
 
 	useEffect(() => {
 		const settingsRef = ref(fbRealTimeDB);
-		onValue(settingsRef, (snapshot) => {
+		onValue(settingsRef, (snapshot: any) => {
 			const data = snapshot.val();
 			setSettings(data.settings);
 		});
@@ -29,12 +28,15 @@ const Users = () => {
 					</div>
 				</Alert>
 			)}
+			<h1 className="text-5xl m-auto">Dashboard</h1>
+			{/*
 			<div className=" grid grid-cols-4 gap-12 w-full">
 				<Chart />
 				<Chart />
 				<Chart />
 				<Chart />
 			</div>
+      */}
 		</>
 	);
 };
