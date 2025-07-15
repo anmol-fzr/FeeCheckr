@@ -13,6 +13,13 @@ Features:
 - Clean, modular UI components
 - State persistence and validation handling
 
+## Modules
+
+- [Server](https://github.com/anmol-fzr/FeeCheckrer)
+- [Admin Portal](https://github.com/anmol-fzr/FeeCheckr)
+- [Server for Mails Only](https://github.com/anmol-fzr/FeeMailer)
+- [Student Portal](https://github.com/anmol-fzr/FeeGiver)
+
 ## Installation
 
 Use pnpm for dependencies
