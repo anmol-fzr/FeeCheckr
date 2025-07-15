@@ -1,5 +1,3 @@
-const UnAuthorized = () => (
-  <></>
-)
+const UnAuthorized = () => <></>;
 
-export { UnAuthorized }
+export { UnAuthorized };

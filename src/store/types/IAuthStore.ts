@@ -3,19 +3,20 @@ const roles = ["superadmin", "hod", "clerk", "student"] as const;
 type Role = (typeof roles)[number];
 
 type ICreds = {
-  token: string | null;
-  isLogin: boolean;
-  name: string;
-  role: Role;
+	token: string | null;
+	isLogin: boolean;
+	email: string;
+	name: string;
+	role: Role;
 };
 
 type IAuthStoreData = {
-  creds: ICreds;
+	creds: ICreds;
 };
 
 type IAuthStoreActions = {
-  resetCreds: () => void;
-  updateCreds: (creds: Partial<ICreds>) => void;
+	resetCreds: () => void;
+	updateCreds: (creds: Partial<ICreds>) => void;
 };
 
 type IAuthStore = IAuthStoreData & IAuthStoreActions;

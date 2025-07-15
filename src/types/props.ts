@@ -1,7 +1,7 @@
-import { ReactNode } from "react"
+import { ReactNode } from "react";
 
 type OnlyChild = {
-  children: ReactNode;
-}
+	children: ReactNode;
+};
 
 export type { OnlyChild };

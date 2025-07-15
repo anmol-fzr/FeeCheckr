@@ -1,7 +1,7 @@
 import { LoginForm } from "@/components/login-form";
 
 const Login = () => {
-  return <LoginForm />;
+	return <LoginForm />;
 };
 
 export { Login };

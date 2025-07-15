@@ -1,8 +1,13 @@
-import { object, string } from "yup";
+import { z } from "zod";
 
-// Perform Transformations here 
-const envSchema = object({
-  VITE_API_URL: string().url().required(),
-})
+// Perform Transformations here
+const envSchema = z.object({
+	VITE_APP_MODE: z
+		.string(z.enum(["DEV", "PROD"]))
+		.optional()
+		.default("DEV"),
 
-export { envSchema }
+	VITE_API_URL: z.string(),
+});
+
+export { envSchema };

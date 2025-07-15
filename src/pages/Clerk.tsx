@@ -1,14 +1,24 @@
 import { useSideBarRole } from "@/hooks/useSideBarRole";
-import { AddHodSheet, ClerkTable, Page } from "@/components";
+import { AddClerkSheet, ClerkTable, Page, AddButton } from "@/components";
+import { PageProvider } from "@/context";
+import { usePageContext, usePageState } from "@/hooks";
 
-const Clerk = () => {
-  useSideBarRole();
+export function Clerk() {
+	const value = usePageState();
+	useSideBarRole();
 
-  return (
-    <Page title="Clerk" Header={AddHodSheet}>
-      <ClerkTable />
-    </Page>
-  );
-};
+	return (
+		<PageProvider value={value}>
+			<Page title="Clerk" Header={ClerkHeader}>
+				<ClerkTable />
+			</Page>
+			<AddClerkSheet />
+		</PageProvider>
+	);
+}
 
-export { Clerk };
+function ClerkHeader() {
+	const { handleNew } = usePageContext();
+
+	return <AddButton onClick={handleNew}>Add New Clerk</AddButton>;
+}
