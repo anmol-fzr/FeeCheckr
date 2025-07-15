@@ -1,4 +1,17 @@
-# React 
+# 📦 FeeCheckr
+Fee Verification Panel for Clerks, HODs, and Admins
+
+FeeCheckr is the verification dashboard used by institutional staff (Clerks, HODs, Admins/Superadmins) to review, approve, or reject student fee submissions.
+
+Built with: React, react-hook-form, shadcn/ui, TailwindCSS, Zustand, Zod
+
+Written in: TypeScript
+
+Features:
+- Role-based access for verification workflow
+- Form-driven review interfaces
+- Clean, modular UI components
+- State persistence and validation handling
 
 ## Installation
 
